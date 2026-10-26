@@ -1,3 +1,4 @@
 .env
 __pycache__/
 data/
+docs/email-to-professor.md
