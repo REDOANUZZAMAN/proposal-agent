@@ -59,6 +59,16 @@ aside h3{display:flex;align-items:center;gap:8px;text-transform:uppercase;font-s
 .nav .dot.f{background:var(--ok);border-color:var(--ok);color:#fff}
 .nav a span.t{flex:1;line-height:1.3}
 #qs{background:var(--acbg);padding:8px 10px;border-radius:6px;border-left:3px solid var(--gold);color:var(--tx)}
+
+/* custom dropdown */
+select.nat{display:none}
+.dd{position:relative}.dd>button{width:100%;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 11px;background:color-mix(in srgb,var(--card) 70%,var(--bg));border:1px solid var(--bd);border-radius:6px;font-weight:400;color:var(--tx)}
+.dd>button:after{content:"";width:7px;height:7px;border-right:2px solid var(--ac);border-bottom:2px solid var(--ac);transform:rotate(45deg) translateY(-2px);transition:transform .2s;flex:none}
+.dd.open>button{border-color:var(--ac);box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 16%,transparent);background:var(--card);color:var(--tx)}.dd.open>button:after{transform:rotate(225deg) translateY(-2px)}
+.dd ul{position:absolute;z-index:20;left:0;right:0;top:calc(100% + 6px);margin:0;padding:5px;list-style:none;background:var(--card);border:1px solid var(--bd);border-top:3px solid var(--gold);border-radius:8px;box-shadow:0 10px 28px rgba(40,25,10,.18);opacity:0;transform:translateY(-6px);pointer-events:none;transition:.16s}
+.dd.open ul{opacity:1;transform:none;pointer-events:auto}
+.dd li{padding:8px 10px;border-radius:5px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13.5px}
+.dd li:hover,.dd li.hl{background:var(--acbg);color:var(--ac)}.dd li.sel{font-weight:600;color:var(--ac)}.dd li.sel:before{content:"✓";font-size:12px}.dd li:not(.sel):before{content:"";width:12px}
 </style></head><body>
 <header><h1>项目申报书生成系统</h1><small>Proposal Agent · 依据申报指南分章节撰写、检查与修订</small><span class="sp"></span>
 <button id="sample">载入示例</button><button id="clear">清空</button></header>
@@ -158,5 +168,14 @@ $('exp').onclick=()=>busy($('exp'),async()=>{dl(await(await api('/api/export',{t
 $('mdx').onclick=()=>{try{dl(new Blob([`# ${title()}\n\n`+done().map(x=>`## ${x.title}\n\n${x.text}\n`).join('\n')],{type:'text/markdown'}),'proposal.md')}catch(e){$('err').textContent=e.message}};
 $('cpy').onclick=async()=>{try{await navigator.clipboard.writeText(done().map(x=>x.title+'\n'+x.text).join('\n\n'));toast('已复制')}catch(e){$('err').textContent=e.message}};
 try{const s=JSON.parse(localStorage[LS]||'null');if(s){$('guide').value=s.g;$('idea').value=s.i;Object.entries(s.m||{}).forEach(([k,v])=>$(k).value=v);chapters=s.chapters||[];items=s.items||[]}}catch(e){}
+
+document.querySelectorAll('select').forEach(sel=>{sel.classList.add('nat');const w=document.createElement('div');w.className='dd';
+ const b=document.createElement('button');b.type='button';const u=document.createElement('ul');
+ const paint=()=>{b.textContent=sel.selectedOptions[0].textContent;[...u.children].forEach((li,i)=>li.classList.toggle('sel',i==sel.selectedIndex))};
+ [...sel.options].forEach((o,i)=>{const li=document.createElement('li');li.textContent=o.textContent;li.onclick=()=>{sel.selectedIndex=i;paint();w.classList.remove('open');sel.dispatchEvent(new Event('input'))};u.append(li)});
+ b.onclick=e=>{e.stopPropagation();document.querySelectorAll('.dd.open').forEach(x=>x!=w&&x.classList.remove('open'));w.classList.toggle('open')};
+ b.onkeydown=e=>{if(e.key=='Escape')w.classList.remove('open');if(e.key=='ArrowDown'||e.key=='ArrowUp'){e.preventDefault();sel.selectedIndex=Math.max(0,Math.min(sel.options.length-1,sel.selectedIndex+(e.key=='ArrowDown'?1:-1)));paint();sel.dispatchEvent(new Event('input'))}};
+ sel.after(w);w.append(b,u);paint()});
+document.addEventListener('click',()=>document.querySelectorAll('.dd.open').forEach(x=>x.classList.remove('open')));
 render();report();
 </script></body></html>
