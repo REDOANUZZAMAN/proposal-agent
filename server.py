@@ -36,6 +36,10 @@ class H(BaseHTTPRequestHandler):
         path = urlparse(self.path).path
         if path in ("/", "/index.html"):
             return self._send(200, open(os.path.join(STATIC, "index.html"), "rb").read(), "text/html")
+        if path == "/api/sample":
+            d = os.path.join(os.path.dirname(__file__), "examples")
+            return self._send(200, {"guide": open(d + "/sample_guide.txt", encoding="utf-8").read(),
+                                    "idea": open(d + "/sample_idea.txt", encoding="utf-8").read()})
         self._send(404, {"error": "not found"})
 
     def do_POST(self):
@@ -49,6 +53,8 @@ class H(BaseHTTPRequestHandler):
                 return self._send(200, agent.outline(j["guide"], j.get("idea", "")))
             if u.path == "/api/chapter":
                 return self._send(200, {"text": agent.chapter(j["guide"], j.get("idea", ""), j["chapter"], j.get("previous", []))})
+            if u.path == "/api/revise":
+                return self._send(200, {"text": agent.revise(j["guide"], j.get("idea", ""), j["chapter"], j["instruction"])})
             if u.path == "/api/check":
                 return self._send(200, agent.check(j["guide"], j["chapters"]))
             if u.path == "/api/export":

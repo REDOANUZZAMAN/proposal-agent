@@ -1,57 +1,104 @@
 <!doctype html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Proposal Agent · 项目申报书生成智能体</title>
 <style>
-:root{--bg:#f6f7f9;--card:#fff;--tx:#1b1f24;--mut:#667085;--bd:#d9dde3;--ac:#1d4ed8;--ok:#15803d;--wa:#b45309;--er:#b91c1c}
-@media(prefers-color-scheme:dark){:root{--bg:#0f1318;--card:#171c23;--tx:#e6e9ee;--mut:#98a2b3;--bd:#2a323c;--ac:#6ea0ff;--ok:#4ade80;--wa:#fbbf24;--er:#f87171}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 system-ui,"PingFang SC","Microsoft YaHei",sans-serif}
-main{max-width:920px;margin:0 auto;padding:16px}h1{font-size:18px;margin:4px 0 12px}h2{font-size:15px;margin:0 0 8px}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:12px;margin-bottom:12px}
-textarea,input{width:100%;font:inherit;color:inherit;background:transparent;border:1px solid var(--bd);border-radius:6px;padding:6px 8px}
-textarea{min-height:90px;resize:vertical}button{font:inherit;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:6px;padding:5px 12px;cursor:pointer}
-button.p{background:var(--ac);border-color:var(--ac);color:#fff}button:disabled{opacity:.5;cursor:wait}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}.mut{color:var(--mut);font-size:12px}
-.ch{border-top:1px solid var(--bd);padding-top:10px;margin-top:10px}.ch label{font-size:12px;color:var(--mut);display:block;margin:6px 0 2px}
-.ok{color:var(--ok)}.partial{color:var(--wa)}.missing{color:var(--er)}table{width:100%;border-collapse:collapse}td,th{border-bottom:1px solid var(--bd);padding:4px 6px;text-align:left;vertical-align:top}
-#err{color:var(--er)}
-</style></head><body><main>
-<h1>项目申报书生成智能体 <span class="mut">Proposal Agent</span></h1>
-<div class="card"><h2>1. 申报指南 Funding guide</h2>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#172033;--mut:#64708a;--bd:#e1e6f0;--ac:#4f46e5;--ac2:#7c3aed;--ok:#16a34a;--wa:#d97706;--er:#dc2626;--sh:0 1px 2px rgba(16,24,40,.05),0 4px 14px rgba(16,24,40,.05)}
+@media(prefers-color-scheme:dark){:root{--bg:#0c1018;--card:#151b27;--tx:#e8ecf4;--mut:#93a0b8;--bd:#263042;--ac:#818cf8;--ac2:#a78bfa;--ok:#4ade80;--wa:#fbbf24;--er:#f87171;--sh:0 1px 2px #0006,0 6px 18px #0004}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.55 system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+header{background:linear-gradient(120deg,var(--ac),var(--ac2));color:#fff;padding:18px 16px}
+header div{max-width:1000px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+header h1{font-size:19px;margin:0;font-weight:650}header p{margin:2px 0 0;opacity:.85;font-size:12.5px}
+main{max-width:1000px;margin:0 auto;padding:16px}
+.steps{display:flex;gap:6px;margin:0 0 14px;flex-wrap:wrap}.steps span{font-size:12px;padding:4px 11px;border-radius:99px;background:var(--card);border:1px solid var(--bd);color:var(--mut)}
+.steps span.on{background:var(--ac);border-color:var(--ac);color:#fff}.steps span.done{color:var(--ok);border-color:var(--ok)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:var(--sh)}
+h2{font-size:15px;margin:0 0 10px;display:flex;align-items:center;gap:8px}h2 i{font-style:normal;background:var(--ac);color:#fff;width:22px;height:22px;border-radius:50%;display:inline-grid;place-items:center;font-size:12px}
+textarea,input,select{width:100%;font:inherit;color:inherit;background:transparent;border:1px solid var(--bd);border-radius:8px;padding:8px 10px;outline:none}
+textarea:focus,input:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 20%,transparent)}
+textarea{min-height:96px;resize:vertical}
+button{font:inherit;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:8px;padding:6px 13px;cursor:pointer;transition:.15s}
+button:hover:not(:disabled){border-color:var(--ac);color:var(--ac)}button.p{background:linear-gradient(120deg,var(--ac),var(--ac2));border:0;color:#fff;font-weight:600}button.p:hover:not(:disabled){color:#fff;filter:brightness(1.08)}
+button:disabled{opacity:.5;cursor:wait}button.g{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.4);color:#fff}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}.mut{color:var(--mut);font-size:12px}.sp{flex:1}
+.ch{border:1px solid var(--bd);border-radius:10px;margin-top:10px;overflow:hidden}.ch>.hd{display:flex;gap:8px;align-items:center;padding:9px 12px;background:color-mix(in srgb,var(--ac) 6%,var(--card));cursor:pointer}
+.ch>.hd b{flex:1}.ch>.bd{padding:12px;display:none}.ch.open>.bd{display:block}
+.chip{font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--bd);color:var(--mut)}.chip.ok{color:var(--ok);border-color:var(--ok)}.chip.partial{color:var(--wa);border-color:var(--wa)}.chip.missing{color:var(--er);border-color:var(--er)}
+label{font-size:12px;color:var(--mut);display:block;margin:8px 0 3px}.req{font-size:12px;color:var(--mut);background:color-mix(in srgb,var(--wa) 10%,transparent);border-radius:8px;padding:6px 10px;margin-top:6px}
+.bar{height:6px;background:var(--bd);border-radius:9px;overflow:hidden;margin-top:10px}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ac),var(--ac2));transition:.3s}
+.score{display:flex;gap:18px;align-items:center;flex-wrap:wrap}.ring{--p:0;width:86px;height:86px;border-radius:50%;background:conic-gradient(var(--ok) calc(var(--p)*1%),var(--bd) 0);display:grid;place-items:center}
+.ring b{width:68px;height:68px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-size:19px}
+table{width:100%;border-collapse:collapse;margin-top:10px}td,th{border-bottom:1px solid var(--bd);padding:6px 8px;text-align:left;vertical-align:top;font-size:13px}th{color:var(--mut);font-weight:500}
+#err{color:var(--er);margin:6px 0;white-space:pre-wrap}.toast{position:fixed;right:16px;bottom:16px;background:var(--tx);color:var(--bg);padding:8px 14px;border-radius:8px;opacity:0;transition:.3s;pointer-events:none}.toast.on{opacity:1}
+.spin{display:inline-block;width:12px;height:12px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:r .7s linear infinite;vertical-align:-2px}@keyframes r{to{transform:rotate(360deg)}}
+@media(max-width:600px){main{padding:10px}}
+</style></head><body>
+<header><div><div style="display:block"><h1>项目申报书生成智能体 · Proposal Agent</h1><p>指南 → 分章节提示词 → 生成 → 合规检查 → 自动修订 → 导出 Word</p></div>
+<div><button class="g" id="sample">载入示例 Load sample</button> <button class="g" id="clear">清空 Clear</button></div></div></header>
+<main>
+<div class="steps" id="steps"><span>1 指南</span><span>2 想法</span><span>3 章节</span><span>4 检查</span><span>5 导出</span></div>
+<div class="card"><h2><i>1</i>申报指南 Funding guide</h2>
 <textarea id="guide" placeholder="粘贴申报指南文本，或上传 .txt / .md / .docx / .pdf"></textarea>
 <div class="row"><input type="file" id="file" accept=".txt,.md,.docx,.pdf" style="width:auto"><span class="mut" id="fmeta"></span></div></div>
-<div class="card"><h2>2. 你的项目想法 Your idea</h2>
-<textarea id="idea" placeholder="项目名称、要解决的问题、拟用方法、团队基础……（写得越具体越好；缺失信息会标为[待补充]，不会编造）"></textarea>
-<div class="row"><button class="p" id="plan">生成章节与提示词 Plan chapters</button><span class="mut">AI 会按指南列出章节，每章的提示词可自行修改</span></div></div>
-<div class="card" id="chs" hidden><h2>3. 分章节提示词与正文 Chapters (editable prompts)</h2><div id="list"></div>
-<div class="row"><button class="p" id="all">按顺序生成全部 Generate all</button><button id="chk">检查是否符合指南 Check</button><button id="exp">导出 Word Export</button><span class="mut" id="st"></span></div></div>
-<div class="card" id="rep" hidden><h2>4. 合规检查 Compliance check</h2><div id="rt"></div></div>
-<div id="err"></div></main>
+<div class="card"><h2><i>2</i>你的项目想法 Your idea</h2>
+<textarea id="idea" placeholder="项目名称、要解决的问题、拟用方法、团队基础……缺失的信息会标为 [待补充]，不会编造"></textarea>
+<div class="row"><button class="p" id="plan">生成章节与提示词 Plan chapters</button><span class="mut">AI 按指南列出章节；每章提示词都可修改</span></div></div>
+<div class="card" id="chs" hidden><h2><i>3</i>分章节提示词与正文 Chapters</h2>
+<div class="row" style="margin-top:0"><button class="p" id="all">按顺序生成全部 Generate all</button><button id="chk">检查是否符合指南 Check</button><button id="exp">导出 Word</button><button id="mdx">导出 Markdown</button><span class="sp"></span><span class="mut" id="tot"></span></div>
+<div class="bar"><i id="pg"></i></div><div id="list"></div></div>
+<div class="card" id="rep" hidden><h2><i>4</i>合规检查 Compliance check</h2><div id="rt"></div></div>
+<div id="err"></div></main><div class="toast" id="toast"></div>
 <script>
-const $=id=>document.getElementById(id);let chapters=[];
-async function api(p,b){const r=await fetch(p,{method:'POST',body:b instanceof ArrayBuffer?b:JSON.stringify(b)});
+const $=id=>document.getElementById(id);let chapters=[],items=[];const LS='proposal-agent-v1';
+const esc=s=>String(s??'').replace(/[<>&"]/g,m=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[m]));
+const toast=m=>{$('toast').textContent=m;$('toast').classList.add('on');setTimeout(()=>$('toast').classList.remove('on'),2200)};
+async function api(p,b,get){const r=await fetch(p,get?{}:{method:'POST',body:b instanceof ArrayBuffer?b:JSON.stringify(b)});
  if(!r.ok){let m=r.statusText;try{m=(await r.json()).error}catch(e){}throw new Error(m)}return r}
-const busy=async(btn,f)=>{btn.disabled=true;$('err').textContent='';try{await f()}catch(e){$('err').textContent='错误 Error: '+e.message}btn.disabled=false};
-$('file').onchange=async e=>{const f=e.target.files[0];if(!f)return;await busy($('file'),async()=>{
- const r=await api('/api/extract?name='+encodeURIComponent(f.name),await f.arrayBuffer());$('guide').value=(await r.json()).text;$('fmeta').textContent=f.name+' · '+$('guide').value.length+' 字符'})};
+const busy=async(btn,f)=>{const t=btn.innerHTML;btn.disabled=true;btn.innerHTML='<span class="spin"></span> '+t;$('err').textContent='';
+ try{await f()}catch(e){$('err').textContent='错误 Error: '+e.message}btn.disabled=false;btn.innerHTML=t};
+function save(){try{localStorage[LS]=JSON.stringify({g:$('guide').value,i:$('idea').value,chapters,items})}catch(e){}stepper()}
+function stepper(){const has=chapters.length,txt=chapters.some(c=>c.text.trim()),s=[$('guide').value.trim(),$('idea').value.trim(),has,items.length,txt];
+ [...$('steps').children].forEach((e,i)=>e.className=s[i]?'done':(i==s.findIndex(x=>!x)?'on':''));
+ const n=chapters.reduce((a,c)=>a+c.text.length,0);$('tot').textContent=has?`共 ${n} 字 · ${chapters.filter(c=>c.text.trim()).length}/${chapters.length} 章已生成`:''}
+$('guide').oninput=$('idea').oninput=save;
+$('file').onchange=async e=>{const f=e.target.files[0];if(!f)return;await busy($('plan'),async()=>{
+ const r=await api('/api/extract?name='+encodeURIComponent(f.name),await f.arrayBuffer());$('guide').value=(await r.json()).text;$('fmeta').textContent=f.name+' · '+$('guide').value.length+' 字符';save()})};
+$('sample').onclick=()=>busy($('sample'),async()=>{const j=await(await api('/api/sample',0,1)).json();$('guide').value=j.guide;$('idea').value=j.idea;save();toast('已载入示例')});
+$('clear').onclick=()=>{if(!confirm('清空所有内容？'))return;chapters=[];items=[];$('guide').value=$('idea').value='';$('chs').hidden=$('rep').hidden=true;save()};
 $('plan').onclick=()=>busy($('plan'),async()=>{if(!$('guide').value.trim())throw new Error('请先提供申报指南');
  const j=await(await api('/api/outline',{guide:$('guide').value,idea:$('idea').value})).json();
- chapters=j.chapters.map(c=>({...c,text:''}));render();$('chs').hidden=false});
-function render(){$('list').innerHTML='';chapters.forEach((c,i)=>{const d=document.createElement('div');d.className='ch';
- d.innerHTML=`<b>${i+1}. </b><input value="${c.title.replace(/"/g,'&quot;')}" data-k="title" style="width:60%">
- ${c.requirements&&c.requirements.length?`<div class="mut">指南要求: ${c.requirements.join('；')}</div>`:''}
- <label>提示词 Prompt（可修改）</label><textarea data-k="prompt" style="min-height:60px"></textarea>
- <label>正文 Draft（可修改）</label><textarea data-k="text" style="min-height:140px"></textarea>
- <div class="row"><button data-g>生成本章 Generate</button></div>`;
- d.querySelectorAll('[data-k]').forEach(el=>{if(el.tagName=='TEXTAREA')el.value=c[el.dataset.k];el.oninput=()=>c[el.dataset.k]=el.value});
- d.querySelector('[data-g]').onclick=ev=>busy(ev.target,()=>gen(i,d));$('list').append(d)})}
-async function gen(i,d){$('st').textContent=`正在生成 ${i+1}/${chapters.length} …`;
- const prev=chapters.slice(0,i).filter(c=>c.text.trim());
- const j=await(await api('/api/chapter',{guide:$('guide').value,idea:$('idea').value,chapter:chapters[i],previous:prev})).json();
- chapters[i].text=j.text;d.querySelector('[data-k=text]').value=j.text;$('st').textContent=''}
-$('all').onclick=()=>busy($('all'),async()=>{const ds=$('list').children;for(let i=0;i<chapters.length;i++)await gen(i,ds[i]);$('st').textContent='完成 Done'});
-$('chk').onclick=()=>busy($('chk'),async()=>{$('st').textContent='检查中 …';
- const j=await(await api('/api/check',{guide:$('guide').value,chapters:chapters.filter(c=>c.text.trim())})).json();$('st').textContent='';
- const esc=s=>String(s??'').replace(/[<&]/g,m=>m=='<'?'&lt;':'&amp;');
- $('rt').innerHTML='<table><tr><th>要求 Requirement</th><th>状态</th><th>位置</th><th>说明</th></tr>'+j.items.map(x=>`<tr><td>${esc(x.requirement)}</td><td class="${x.status}">${x.status}</td><td>${esc(x.where)}</td><td>${esc(x.note)}</td></tr>`).join('')+'</table>';$('rep').hidden=false});
-$('exp').onclick=()=>busy($('exp'),async()=>{const r=await api('/api/export',{title:($('idea').value.split('\n')[0]||'项目申报书').slice(0,60),chapters:chapters.filter(c=>c.text.trim())});
- const u=URL.createObjectURL(await r.blob());const a=document.createElement('a');a.href=u;a.download='proposal.docx';a.click()});
+ chapters=j.chapters.map(c=>({...c,text:''}));items=[];render();save()});
+function render(){$('chs').hidden=!chapters.length;$('rep').hidden=!items.length;$('list').innerHTML='';
+ chapters.forEach((c,i)=>{const d=document.createElement('div');d.className='ch'+(c.open?' open':'');
+  const st=c.text.trim()?`<span class="chip ok">${c.text.length} 字</span>`:'<span class="chip">未生成</span>';
+  d.innerHTML=`<div class="hd"><span class="mut">${i+1}</span><b>${esc(c.title)}</b>${st}<span class="mut">▾</span></div>
+  <div class="bd">${c.requirements&&c.requirements.length?`<div class="req">📌 指南要求：${esc(c.requirements.join('；'))}</div>`:''}
+  <label>提示词 Prompt（可修改）</label><textarea data-k="prompt" style="min-height:64px"></textarea>
+  <label>正文 Draft（可直接编辑）</label><textarea data-k="text" style="min-height:170px"></textarea>
+  <div class="row"><button class="p" data-g>生成本章</button><input data-r placeholder="修订指令，如：更简洁 / 加入量化指标 / 语气更正式" style="flex:1;min-width:200px"><button data-v>按指令修订 Revise</button></div></div>`;
+  d.querySelector('.hd').onclick=()=>{c.open=!c.open;d.classList.toggle('open')};
+  d.querySelectorAll('[data-k]').forEach(el=>{el.value=c[el.dataset.k]||'';el.oninput=()=>{c[el.dataset.k]=el.value;if(el.dataset.k=='text')stepper();save()}});
+  d.querySelector('[data-g]').onclick=ev=>busy(ev.currentTarget,()=>gen(i,d));
+  d.querySelector('[data-v]').onclick=ev=>busy(ev.currentTarget,async()=>{const ins=d.querySelector('[data-r]').value.trim();if(!ins)throw new Error('请输入修订指令');
+   if(!c.text.trim())throw new Error('请先生成本章');await rev(i,d,ins)});$('list').append(d)});stepper();renderReport()}
+function setText(i,d,t){chapters[i].text=t;chapters[i].open=true;d.classList.add('open');d.querySelector('[data-k=text]').value=t;
+ const ch=d.querySelector('.chip');ch.className='chip ok';ch.textContent=t.length+' 字';save()}
+async function gen(i,d){const prev=chapters.slice(0,i).filter(c=>c.text.trim());
+ const j=await(await api('/api/chapter',{guide:$('guide').value,idea:$('idea').value,chapter:chapters[i],previous:prev})).json();setText(i,d,j.text)}
+async function rev(i,d,ins){const j=await(await api('/api/revise',{guide:$('guide').value,idea:$('idea').value,chapter:chapters[i],instruction:ins})).json();setText(i,d,j.text);toast('已修订：'+chapters[i].title)}
+$('all').onclick=()=>busy($('all'),async()=>{const ds=$('list').children;for(let i=0;i<chapters.length;i++){$('pg').style.width=(i/chapters.length*100)+'%';await gen(i,ds[i])}$('pg').style.width='100%';toast('全部章节已生成')});
+$('chk').onclick=()=>busy($('chk'),async()=>{const cs=chapters.filter(c=>c.text.trim());if(!cs.length)throw new Error('请先生成章节');
+ items=(await(await api('/api/check',{guide:$('guide').value,chapters:cs})).json()).items;save();renderReport();$('rep').scrollIntoView({behavior:'smooth'})});
+function renderReport(){$('rep').hidden=!items.length;if(!items.length)return;
+ const ok=items.filter(x=>x.status=='ok').length,pt=items.filter(x=>x.status=='partial').length,ms=items.length-ok-pt,p=Math.round((ok+pt/2)/items.length*100);
+ $('rt').innerHTML=`<div class="score"><div class="ring" style="--p:${p}"><b>${p}%</b></div><div><span class="chip ok">✓ ${ok} 满足</span> <span class="chip partial">◐ ${pt} 部分</span> <span class="chip missing">✗ ${ms} 缺失</span>
+ <div class="mut" style="margin-top:6px">${chapters.some(c=>!c.text.trim())?`<b style="color:var(--wa)">还有 ${chapters.filter(c=>!c.text.trim()).length} 章未生成，分数会偏低。</b> `:''}先检查，再点“自动修订”：只对有问题的章节按检查意见重写，然后可重新检查。</div></div><span class="sp"></span><button class="p" id="fix">自动修订 Auto-fix</button></div>
+ <table><tr><th>要求 Requirement</th><th>状态</th><th>位置</th><th>说明</th></tr>${items.map(x=>`<tr><td>${esc(x.requirement)}</td><td><span class="chip ${esc(x.status)}">${esc(x.status)}</span></td><td>${esc(x.where)}</td><td>${esc(x.note)}</td></tr>`).join('')}</table>`;
+ $('fix').onclick=ev=>busy(ev.currentTarget,async()=>{const ds=$('list').children;let n=0;
+  for(let i=0;i<chapters.length;i++){const bad=items.filter(x=>x.status!='ok'&&x.where&&x.where.includes(chapters[i].title)&&chapters[i].text.trim());
+   if(!bad.length)continue;await rev(i,ds[i],'请修正以下问题：\n'+bad.map(x=>`- ${x.requirement}：${x.note}`).join('\n'));n++}
+  toast(n?`已修订 ${n} 章，请重新检查`:'没有可自动修订的章节（缺失章节请在上方补充）')})}
+function dl(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click()}
+const done=()=>{const c=chapters.filter(x=>x.text.trim());if(!c.length)throw new Error('请先生成章节');return c};
+$('exp').onclick=()=>busy($('exp'),async()=>{const c=done();const r=await api('/api/export',{title:($('idea').value.split('\n')[0]||'项目申报书').slice(0,60),chapters:c});dl(await r.blob(),'proposal.docx')});
+$('mdx').onclick=()=>{try{const c=done();dl(new Blob([c.map(x=>`## ${x.title}\n\n${x.text}\n`).join('\n')],{type:'text/markdown'}),'proposal.md')}catch(e){$('err').textContent=e.message}};
+try{const s=JSON.parse(localStorage[LS]||'null');if(s){$('guide').value=s.g;$('idea').value=s.i;chapters=s.chapters||[];items=s.items||[]}}catch(e){}render();
 </script></body></html>

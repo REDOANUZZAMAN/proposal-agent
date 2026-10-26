@@ -36,3 +36,11 @@ def check(guide, chapters):
     draft = "\n\n".join(f"## {c['title']}\n{c['text']}" for c in chapters)
     n = sum(len(c["text"]) for c in chapters)      # exact count: models cannot count length reliably
     return chat_json(CHECK_SYS, f"# Guide\n{guide}\n\n# Draft (exactly {n} characters in total)\n{draft}")
+
+
+REVISE_SYS = f"""You revise one chapter of a project proposal. Apply the instruction/issues exactly, keep everything else that is good.
+Do not invent numbers, names, institutions or results; use [待补充: …] for missing facts. Output the full revised chapter body only. {LANG}"""
+
+
+def revise(guide, idea, ch, instruction):
+    return chat(REVISE_SYS, f"# Guide\n{guide}\n\n# Applicant idea\n{idea}\n\n# Chapter: {ch['title']}\n{ch['text']}\n\n# Instruction / issues to fix\n{instruction}")
