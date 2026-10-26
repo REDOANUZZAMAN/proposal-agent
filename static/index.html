@@ -69,6 +69,34 @@ select.nat{display:none}
 .dd.open ul{opacity:1;transform:none;pointer-events:auto}
 .dd li{padding:8px 10px;border-radius:5px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13.5px}
 .dd li:hover,.dd li.hl{background:var(--acbg);color:var(--ac)}.dd li.sel{font-weight:600;color:var(--ac)}.dd li.sel:before{content:"✓";font-size:12px}.dd li:not(.sel):before{content:"";width:12px}
+
+/* mobile */
+@media(max-width:820px){
+ body{padding-bottom:62px}header{padding:10px 14px;gap:8px}header h1{font-size:15px}header small{display:none}header button{padding:5px 10px;font-size:13px}
+ .wrap{display:block}
+ aside{border-right:0;border-bottom:1px solid var(--bd);padding:10px 14px;display:grid;grid-template-columns:1fr 1fr;gap:2px 14px}
+ aside h3{margin:4px 0 2px;font-size:10.5px}aside h3:after{display:none}
+ aside h3:nth-of-type(3),aside h3:nth-of-type(4){display:none}#qs{display:none}
+ .nav{grid-column:1/-1;display:flex;overflow-x:auto;gap:6px;padding:6px 0 4px;margin:0 -14px;padding-left:14px;padding-right:14px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+ .nav::-webkit-scrollbar{display:none}.nav:before{display:none}.nav a{flex:none;border:1px solid var(--bd);padding:4px 10px 4px 5px;gap:6px;background:var(--card);box-shadow:none!important}
+ .nav a.on{border-color:var(--ac)}.nav .dot{width:20px;height:20px}.nav a span.t{white-space:nowrap}.nav>span.mut{grid-column:1/-1}
+ main{padding:12px 12px 8px}
+ .tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;margin:0;background:var(--card);border-top:1px solid var(--bd);border-bottom:0;box-shadow:0 -4px 14px rgba(40,25,10,.1);padding-bottom:env(safe-area-inset-bottom)}
+ .tabs button{flex:1;padding:11px 2px 10px;font-size:12px;border-bottom:0;border-top:3px solid transparent;border-radius:0;white-space:nowrap}.tabs button.on{border-top-color:var(--ac)}
+ .toast{bottom:74px;left:12px;right:12px;text-align:center}
+ .sec{padding:13px 13px}textarea,input,select,.dd>button{font-size:16px}textarea{min-height:90px}
+ [data-k=text]{min-height:240px!important}
+ .grid{grid-template-columns:1fr 1fr;gap:10px}.grid>div:nth-child(1),.grid>div:nth-child(2){grid-column:1/-1}
+ .row{gap:8px}.row button{flex:1 1 auto}.row .sp{display:none}.row input[data-r]{width:100%!important;flex:1 1 100%}
+ input[type=file]{min-width:0;width:100%}
+ .sum{gap:14px 22px}.sum b{font-size:22px}
+ .sec table,.sec tbody,.sec tr,.sec td,.sec th{display:block;width:auto!important}.sec table tr:first-child{display:none}
+ .sec table tr{border:1px solid var(--bd);border-radius:6px;padding:8px 10px;margin-bottom:8px;background:var(--card)}.sec td{border:0;padding:2px 0}
+ .sec td:nth-child(3):before{content:"位置：";color:var(--mut)}.sec td:nth-child(2){padding:4px 0}
+ .doc{padding:22px 16px;font-size:14.5px;line-height:1.85}.doc h1{font-size:19px}
+ h2 .tag{float:none!important;display:inline-block;margin-left:8px;vertical-align:middle}
+}
+@media(max-width:380px){.grid{grid-template-columns:1fr}.tabs button{font-size:11px}}
 </style></head><body>
 <header><h1>项目申报书生成系统</h1><small>Proposal Agent · 依据申报指南分章节撰写、检查与修订</small><span class="sp"></span>
 <button id="sample">载入示例</button><button id="clear">清空</button></header>
