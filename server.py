@@ -180,6 +180,20 @@ class H(BaseHTTPRequestHandler):
                         db.execute("UPDATE users SET last_seen=? WHERE name=?", (time.time(), t[0]))
                     return t[0]
 
+    def client_ip(self):
+        """Visitor address. Behind Traefik/Cloudflare the TCP peer is a private proxy address, so trust the forwarded headers
+        only then (a public peer is a direct hit on :8100 and could forge them)."""
+        peer = self.client_address[0]
+        try:
+            private = ipaddress.ip_address(peer.split("%")[0]).is_private
+        except ValueError:
+            private = False
+        if private:
+            fwd = self.headers.get("CF-Connecting-IP") or self.headers.get("X-Forwarded-For", "").split(",")[0].strip()
+            if fwd:
+                return fwd
+        return peer
+
     def is_admin(self):
         u = self.user()
         return bool(u and db.execute("SELECT is_admin FROM users WHERE name=?", (u,)).fetchone()[0])
@@ -187,7 +201,7 @@ class H(BaseHTTPRequestHandler):
     def do_GET(self):
         path = urlparse(self.path).path
         if path == "/api/me":
-            return self._send(200, {"user": self.user(), "admin": self.is_admin(), "lang": "zh" if is_cn(self.client_address[0]) else "en"})
+            return self._send(200, {"user": self.user(), "admin": self.is_admin(), "lang": "zh" if is_cn(self.client_ip()) else "en"})
         if path.startswith("/api/") and path != "/api/sample" and not self.user():
             return self._send(401, {"error": "login required"})
         if path.startswith("/api/admin/"):
@@ -284,7 +298,7 @@ class H(BaseHTTPRequestHandler):
             return self._send(401, {"error": "Wrong username or password."})
         elif row[2]:
             return self._send(403, {"error": "This account is disabled. Contact the administrator."})
-        self._send(200, {"user": name, "admin": bool(row[3])}, extra={"Set-Cookie": f"pa={make_token(name, row[1].hex()[:12])}; Path=/; HttpOnly; SameSite=Lax; Max-Age={30 * 86400}"})
+        self._send(200, {"user": name, "admin": bool(row[3])}, extra={"Set-Cookie": f"pa={make_token(name, row[1].hex()[:12])}; Path=/; HttpOnly; SameSite=Lax; Max-Age={30 * 86400}{'; Secure' if self.headers.get('X-Forwarded-Proto') == 'https' else ''}"})
 
     def admin_get(self, path):
         day = lambda n: time.strftime("%Y-%m-%d", time.gmtime(time.time() - n * 86400))
