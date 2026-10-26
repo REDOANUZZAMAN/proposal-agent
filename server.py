@@ -1,5 +1,5 @@
 """Web UI + JSON API (stdlib http.server). Run: python server.py [port]"""
-import threading, bisect, base64, hashlib, ipaddress, hmac, html, io, json, os, re, secrets, sqlite3, subprocess, sys, tempfile, time, zipfile
+import threading, urllib.request, bisect, base64, hashlib, ipaddress, hmac, html, io, json, os, re, secrets, sqlite3, subprocess, sys, tempfile, time, zipfile
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
@@ -112,6 +112,27 @@ def is_cn(ip):
         return any(a in n for n in GEO[1])
     except ValueError:
         return False
+
+
+def notify_signup(name, code):
+    """Tell the owner by email (Resend) that an account was created. Runs in a thread; failures are logged and never affect the signup."""
+    key, to = _env("RESEND_API_KEY"), _env("NOTIFY_EMAIL")
+    if not (key and to):
+        return
+    try:
+        inv = db.execute("SELECT label,uses,max_uses FROM invites WHERE code=?", (code,)).fetchone() or ("?", 0, 0)
+        total = db.execute("SELECT COUNT(*) FROM users").fetchone()[0]
+        text = (f"A new account was created on Proposal Agent.\n\nUsername: {name}\nTime (UTC): {time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())}\n"
+                f"Invite used: {inv[0]} ({inv[1]} of {inv[2] or 'unlimited'} uses)\nUsers now: {total}\n\nManage users and invites: the Admin tab at https://proposal.rmaikr.top/")
+        body = json.dumps({"from": _env("NOTIFY_FROM") or "Proposal Agent <alerts@lynqdev.com>", "to": [to],
+                           "subject": f"New Proposal Agent account: {name}", "text": text}).encode()
+        req = urllib.request.Request("https://api.resend.com/emails", body, {"Authorization": "Bearer " + key, "Content-Type": "application/json", "User-Agent": "proposal-agent/1.0"})
+        res = json.load(urllib.request.urlopen(req, timeout=15))
+        line = f"sent id={res.get('id')} user={name}"
+    except Exception as e:                                   # shortcut: no retry queue; a missed email is only logged, upgrade if you need guaranteed delivery
+        line = f"FAILED user={name}: {type(e).__name__}: {e}"
+    with open(os.path.join(DATA, "notify.log"), "a") as f:
+        f.write(time.strftime("%Y-%m-%d %H:%M:%S ", time.gmtime()) + line + "\n")
 
 
 def new_invite(label, max_uses=1, days=30):
@@ -297,6 +318,7 @@ class H(BaseHTTPRequestHandler):
             row = (salt, _hash(pw, salt), 0, 0)
             db.execute("INSERT INTO users(name,salt,hash,created,invite) VALUES(?,?,?,?,?)", (name, salt, row[1], time.time(), code))
             db.execute("UPDATE invites SET uses=uses+1 WHERE code=?", (code,))
+            threading.Thread(target=notify_signup, args=(name, code), daemon=True).start()
         elif not row or not hmac.compare_digest(_hash(pw, row[0]), row[1]):
             time.sleep(0.6)                          # shortcut: slows guessing only; add real rate-limits if this goes public
             return self._send(401, {"error": "Wrong username or password."})
