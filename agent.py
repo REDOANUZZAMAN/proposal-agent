@@ -25,26 +25,27 @@ def outline(guide, idea):
     return chat_json(OUTLINE_SYS, f"# Guide\n{guide}\n\n# Applicant idea\n{idea}")
 
 
-def _cap(budget):
-    return f"\nLength: at most {budget} characters for this chapter (the whole proposal has a hard limit). Never exceed it." if budget else ""
+def _cap(budget, unit="chars"):
+    return f"\nLength: at most {budget} {'words' if unit == 'words' else 'characters'} for this chapter (the whole proposal has a hard limit). Never exceed it." if budget else ""
 
 
-def chapter(guide, idea, ch, previous, budget=None):
+def chapter(guide, idea, ch, previous, budget=None, unit="chars"):
     prev = "\n\n".join(f"## {p['title']}\n{p['text']}" for p in previous) or "(none yet)"
     reqs = "\n".join("- " + r for r in ch.get("requirements", [])) or "(none)"
     return chat(CHAPTER_SYS, f"# Guide\n{guide}\n\n# Applicant idea\n{idea}\n\n# Earlier chapters\n{prev}\n\n"
-                             f"# Write this chapter: {ch['title']}\nInstruction: {ch['prompt']}\nRequirements:\n{reqs}{_cap(budget)}")
+                             f"# Write this chapter: {ch['title']}\nInstruction: {ch['prompt']}\nRequirements:\n{reqs}{_cap(budget, unit)}")
 
 
-def check(guide, chapters):
+def check(guide, chapters, count=None, unit="chars"):
     draft = "\n\n".join(f"## {c['title']}\n{c['text']}" for c in chapters)
-    n = sum(len(c["text"]) for c in chapters)      # exact count: models cannot count length reliably
-    return chat_json(CHECK_SYS, f"# Guide\n{guide}\n\n# Draft (exactly {n} characters in total)\n{draft}")
+    n = count if count is not None else sum(len(c["text"]) for c in chapters)      # exact count (same rule as the UI): models cannot count length reliably
+    u = "words" if unit == "words" else "characters"
+    return chat_json(CHECK_SYS, f"# Guide\n{guide}\n\n# Draft (exactly {n} {u} in total, spaces and line breaks not counted)\n{draft}")
 
 
 REVISE_SYS = f"""You revise one chapter of a project proposal. Apply the instruction/issues exactly, keep everything else that is good.
 Do not invent numbers, names, institutions or results; use [待补充: …] for missing facts. Output the full revised chapter body only. {LANG}"""
 
 
-def revise(guide, idea, ch, instruction, budget=None):
-    return chat(REVISE_SYS, f"# Guide\n{guide}\n\n# Applicant idea\n{idea}\n\n# Chapter: {ch['title']}\n{ch['text']}\n\n# Instruction / issues to fix\n{instruction}{_cap(budget)}")
+def revise(guide, idea, ch, instruction, budget=None, unit="chars"):
+    return chat(REVISE_SYS, f"# Guide\n{guide}\n\n# Applicant idea\n{idea}\n\n# Chapter: {ch['title']}\n{ch['text']}\n\n# Instruction / issues to fix\n{instruction}{_cap(budget, unit)}")

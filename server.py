@@ -219,11 +219,11 @@ class H(BaseHTTPRequestHandler):
             if u.path == "/api/outline":
                 return self._send(200, agent.outline(j["guide"], j.get("idea", "")))
             if u.path == "/api/chapter":
-                return self._send(200, {"text": agent.chapter(j["guide"], j.get("idea", ""), j["chapter"], j.get("previous", []), j.get("budget"))})
+                return self._send(200, {"text": agent.chapter(j["guide"], j.get("idea", ""), j["chapter"], j.get("previous", []), j.get("budget"), j.get("unit", "chars"))})
             if u.path == "/api/revise":
-                return self._send(200, {"text": agent.revise(j["guide"], j.get("idea", ""), j["chapter"], j["instruction"], j.get("budget"))})
+                return self._send(200, {"text": agent.revise(j["guide"], j.get("idea", ""), j["chapter"], j["instruction"], j.get("budget"), j.get("unit", "chars"))})
             if u.path == "/api/check":
-                return self._send(200, agent.check(j["guide"], j["chapters"]))
+                return self._send(200, agent.check(j["guide"], j["chapters"], j.get("count"), j.get("unit", "chars")))
             if u.path == "/api/export":
                 return self._send(200, docx_out.build(j.get("title") or "项目申报书", j["chapters"]),
                                   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",

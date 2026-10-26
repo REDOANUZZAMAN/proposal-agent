@@ -109,6 +109,7 @@ option{background:var(--card);color:var(--tx)}
 .hi{transition:box-shadow .15s,border-color .15s}.hi:hover{box-shadow:0 4px 14px rgba(40,25,10,.12);border-color:color-mix(in srgb,var(--ac) 40%,var(--bd))}.hi .meter{grid-column:1/-1;height:4px;margin:4px 0 0}
 .bars{display:flex;gap:8px;align-items:flex-end;height:84px;margin-top:12px}.bars div{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;font-size:10.5px;color:var(--mut);gap:3px}.bars i{display:block;width:100%;background:var(--gold);border-radius:3px 3px 0 0;min-height:2px}
 .tw{overflow-x:auto}.at td,.at th{white-space:nowrap}.at code{font:12px ui-monospace,monospace;background:var(--bg);padding:2px 6px;border-radius:4px;user-select:all}.at button{padding:3px 9px;font-size:12px}.at td:first-child{white-space:normal;word-break:break-all;min-width:150px;max-width:230px}.at td:last-child{white-space:normal;min-width:240px}.at td:last-child button{margin:0 4px 4px 0}header small{flex:0 1 auto;min-width:0;max-width:18vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#who{max-width:210px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sec .row input{width:auto;min-width:0}
+.req.err{background:#f8e3e1;color:#5a1a1a;border-left-color:var(--er)}#ovr{display:flex;align-items:center;flex-wrap:wrap}#ovr[hidden]{display:none}@media(prefers-color-scheme:dark){header{background:#7a1c2a}button.p{background:#b83a48;border-color:#b83a48;color:#fff}header button:hover:not(:disabled){color:#7a1c2a}.req.err{background:#3a1f1f;color:#f0c4c4}}
 </style></head><body>
 <header><h1>项目申报书生成系统</h1><small>Proposal Agent · 依据申报指南分章节撰写、检查与修订</small><span class="sp"></span>
 <span id="who" class="mut" style="color:#f0d9d6"></span><button id="out" hidden>退出</button><button id="lang" title="Language / 语言">EN</button><button id="sample">载入示例</button><button id="clear">清空</button></header>
@@ -119,7 +120,7 @@ option{background:var(--card);color:var(--tx)}
 <h3>质量</h3><div class="mut" id="qs">未检查</div></aside>
 <main>
 <div class="tabs" id="tabs"><button data-t="in" class="on">1 输入</button><button data-t="ed">2 章节撰写</button><button data-t="ck">3 合规检查</button><button data-t="pv">4 预览与导出</button><button data-t="hs" style="margin-left:auto">历史记录</button><button data-t="ad" id="tad" hidden>管理后台</button></div>
-<div id="err"></div><div id="abar" class="req" hidden><b id="atx"></b> <button id="astop" style="margin-left:10px">停止</button></div>
+<div id="err"></div><div id="ovr" class="req err" hidden><b id="ovrt"></b> <button id="ovrfit" style="margin-left:10px">压缩到字数上限</button></div><div id="abar" class="req" hidden><b id="atx"></b> <button id="astop" style="margin-left:10px">停止</button></div>
 
 <div class="pane on" id="p-in">
 <div class="sec"><h2>申报指南</h2><textarea id="guide" style="min-height:150px" placeholder="粘贴申报指南全文，或上传 .txt / .md / .docx / .pdf 文件"></textarea>
@@ -158,7 +159,7 @@ let lang,admin=false;try{lang=localStorage[LL]}catch(e){}const saved=!!lang;lang
 const t=(z,e)=>lang=='en'?e:z;
 // static UI text: Chinese -> English (dynamic text uses t() inline)
 const EN={'项目申报书生成系统':'Project Proposal Generator','Proposal Agent · 依据申报指南分章节撰写、检查与修订':'Proposal Agent · draft, check and revise chapter by chapter from the funding guide',
-'载入示例':'Load sample','清空':'Clear','管理后台':'Admin','登录':'Log in','注册':'Register','显示':'Show','隐藏':'Hide','读取申报指南，自动规划章节':'Reads the funding guide and plans the chapters','逐章撰写，缺失的事实标记而不编造':'Writes chapter by chapter; missing facts are flagged, never invented','逐条合规检查，一键导出 Word':'Checks every requirement, then exports to Word','自动模式':'Auto mode','系统读取指南，列出所需章节、各章提示词及必须满足的要求。自动模式：一键完成规划、撰写、检查并跳到导出页':'Reads the guide and lists the required chapters, a prompt for each, and the rules it must meet. Auto mode: plan, write, check and jump to export in one click','停止':'Stop','退出':'Log out','历史记录':'History','新建申报书':'New report','每份申报书会自动保存到你的账号':'Every report is saved to your account automatically','下一步：预览与导出 →':'Next: preview & export →','用户名':'Username','密码':'Password','邀请码':'Invite code','登录后，申报书会自动保存，可在“历史记录”中再次打开。':'After you log in, reports are saved automatically and can be reopened from History.','撰写进度':'Progress','字数':'Word count','章节':'Chapters','质量':'Quality',
+'载入示例':'Load sample','清空':'Clear','压缩到字数上限':'Shorten to the limit','管理后台':'Admin','登录':'Log in','注册':'Register','显示':'Show','隐藏':'Hide','读取申报指南，自动规划章节':'Reads the funding guide and plans the chapters','逐章撰写，缺失的事实标记而不编造':'Writes chapter by chapter; missing facts are flagged, never invented','逐条合规检查，一键导出 Word':'Checks every requirement, then exports to Word','自动模式':'Auto mode','系统读取指南，列出所需章节、各章提示词及必须满足的要求。自动模式：一键完成规划、撰写、检查并跳到导出页':'Reads the guide and lists the required chapters, a prompt for each, and the rules it must meet. Auto mode: plan, write, check and jump to export in one click','停止':'Stop','退出':'Log out','历史记录':'History','新建申报书':'New report','每份申报书会自动保存到你的账号':'Every report is saved to your account automatically','下一步：预览与导出 →':'Next: preview & export →','用户名':'Username','密码':'Password','邀请码':'Invite code','登录后，申报书会自动保存，可在“历史记录”中再次打开。':'After you log in, reports are saved automatically and can be reopened from History.','撰写进度':'Progress','字数':'Word count','章节':'Chapters','质量':'Quality',
 '1 输入':'1 Input','2 章节撰写':'2 Write chapters','3 合规检查':'3 Compliance check','4 预览与导出':'4 Preview & export',
 '申报指南':'Funding guide','粘贴申报指南全文，或上传 .txt / .md / .docx / .pdf 文件':'Paste the full funding guide, or upload a .txt / .md / .docx / .pdf file',
 '项目基本信息':'Project details','项目名称':'Project title','申报单位':'Applicant organisation','项目负责人':'Project lead','实施周期':'Duration','如 18 个月':'e.g. 18 months',
@@ -184,18 +185,28 @@ function idea(){const g=id=>$(id).value.trim(),L=[];
 const getState=()=>({g:$('guide').value,i:$('idea').value,m:Object.fromEntries(META.map(k=>[k,$(k).value])),chapters,items,rid});
 function setState(s){s=s||{};$('guide').value=s.g||'';$('idea').value=s.i||'';META.forEach(k=>{const e=$(k),v=(s.m||{})[k];e.value=v??(e.tagName=='SELECT'?e.options[0].value:'')});chapters=s.chapters||[];items=s.items||[];rid=s.rid||null;cur=0}
 function save(){try{localStorage[LS+':'+me]=JSON.stringify(getState())}catch(e){}side();clearTimeout(timer);timer=setTimeout(sync,1500)}
+addEventListener('pagehide',()=>{if(timer&&me)fetch('/api/reports',{method:'POST',keepalive:true,body:JSON.stringify({id:rid,title:$('m-name').value.trim()||$('guide').value.trim().split('\n')[0].slice(0,60),data:getState()})})});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&timer)sync()});
 async function sync(){clearTimeout(timer);timer=null;if(!me||!($('guide').value.trim()||chapters.length))return;
  try{rid=(await(await api('/api/reports',{id:rid,title:$('m-name').value.trim()||$('guide').value.trim().split('\n')[0].slice(0,60),data:getState()})).json()).id;localStorage[LS+':'+me]=JSON.stringify(getState())}catch(e){}}
 document.querySelectorAll('textarea#guide,#idea,.grid input,.grid select').forEach(e=>e.oninput=save);
 function tab(x){if(x=='hs')hist();if(x=='ad')adm();document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t==x));document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.id=='p-'+x));if(x=='pv')preview()}
 $('tabs').onclick=e=>{const b=e.target.closest('[data-t]');b&&tab(b.dataset.t)}; // closest(): browser translation wraps button text in <font>
 document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');g&&tab(g.dataset.go)});
-const limit=()=>+(($('guide').value.match(/不(?:得)?超过\s*(\d+)\s*字/)||[])[1])||0,budget=()=>limit()&&chapters.length?Math.floor(limit()*.9/chapters.length):undefined;
-const tagOf=c=>c.text.trim()?c.text.length+t(' 字',' chars'):t('未撰写','Not written');
-function side(){const f=chapters.filter(c=>c.text.trim()).length,n=chapters.reduce((a,c)=>a+c.text.length,0);
+function parseLimit(g){let m,n=0,u='chars';
+ if(m=g.match(/(?:不(?:得)?(?:超过|多于)|至多|最多|控制在|限制?在)\s*([\d.,，]+)\s*(万)?\s*字/)||g.match(/([\d.,，]+)\s*(万)?\s*字\s*(?:以内|之内|以下)/))n=Math.round(parseFloat(m[1].replace(/[,，]/g,''))*(m[2]?1e4:1));
+ else if(m=g.match(/(?:no more than|not (?:to )?exceed(?:ing)?|at most|maximum(?: of)?|up to|limited to|within)\s*([\d,]+)\s*(words|characters|chars)/i)){n=+m[1].replace(/,/g,'');u=/word/i.test(m[2])?'words':'chars'}
+ return{n:n||0,u}}
+const lim=()=>parseLimit($('guide').value),limit=()=>lim().n,unitS=()=>lim().u=='words'?t('词','words'):t('字','chars');
+const meas=x=>lim().u=='words'?(x.match(/[一-鿿]|[A-Za-z0-9]+(?:['’-][A-Za-z0-9]+)*/g)||[]).length:x.replace(/\s/g,'').length; // spaces/newlines are not counted
+const total=()=>chapters.reduce((a,c)=>a+meas(c.text),0),fnum=n=>n.toLocaleString(lang=='en'?'en-US':'zh-CN');
+const budget=()=>limit()&&chapters.length?Math.floor(limit()*.88/chapters.length):undefined;
+const tagOf=c=>c.text.trim()?fnum(meas(c.text))+' '+unitS():t('未撰写','Not written');
+function side(){const f=chapters.filter(c=>c.text.trim()).length,n=total(),m=limit(),over=m&&n>m;
  $('pgb').style.width=chapters.length?f/chapters.length*100+'%':0;$('pgt').textContent=chapters.length?t(`已完成 ${f} / ${chapters.length} 章`,`${f} of ${chapters.length} chapters written`):t('尚未开始','Not started');
- const m=limit();$('lmb').style.width=m?Math.min(n/m*100,100)+'%':0;$('lm').classList.toggle('over',m&&n>m);
- $('lmt').textContent=t(`${n} 字`,`${n} chars`)+(m?t(` / 上限 ${m}`,` / limit ${m}`):t('（指南未限制字数）',' (no limit in the guide)'));
+ $('lmb').style.width=m?Math.min(n/m*100,100)+'%':0;$('lm').classList.toggle('over',!!over);
+ $('lmt').textContent=m?`${fnum(n)} / ${fnum(m)} ${unitS()}`+(over?t('　超出上限','　over the limit'):''):`${fnum(n)} ${unitS()}`+t('（指南未限制字数）',' (no limit in the guide)');
+ $('ovr').hidden=!over;if(over)$('ovrt').textContent=t(`超出字数上限 ${fnum(n-m)} ${unitS()}（${fnum(n)} / ${fnum(m)}）。导出前请压缩。`,`Over the limit by ${fnum(n-m)} ${unitS()} (${fnum(n)} / ${fnum(m)}). Shorten it before exporting.`);
  $('nav').innerHTML=chapters.length?chapters.map((c,i)=>`<a data-i="${i}" class="${i==cur?'on':''}"><span class="dot ${c.text.trim()?'f':''}">${c.text.trim()?'✓':i+1}</span><span class="t">${esc(c.title)}</span></a>`).join(''):`<span class="mut">${t('生成章节后显示','Shown after the plan is made')}</span>`;
  const ok=items.filter(x=>x.status=='ok').length;$('qs').textContent=items.length?t(`满足 ${ok} / ${items.length} 项要求`,`${ok} of ${items.length} requirements met`):t('未检查','Not checked');
  const T=[$('guide').value.trim()&&chapters.length,chapters.length&&f==chapters.length,items.length,f];document.querySelectorAll('.tabs button').forEach((b,i)=>b.classList.toggle('done',!!T[i]))}
@@ -226,12 +237,17 @@ function render(){$('empty').hidden=chapters.length>0;$('list').innerHTML='';if(
  d.querySelector('[data-all]').onclick=e=>busy(e.currentTarget,async()=>{for(let k=0;k<chapters.length;k++){cur=k;side();$('pgt').textContent=t(`正在撰写第 ${k+1} / ${chapters.length} 章…`,`Writing chapter ${k+1} of ${chapters.length}…`);await gen(k)}render();toast(t('全部章节已生成','All chapters written'))});
  $('list').append(d);side()}
 const put=(c,x)=>{if(c.text.trim())c.hist.push(c.text);c.text=x;save()};
-async function gen(i){const j=await(await api('/api/chapter',{guide:$('guide').value,idea:idea(),chapter:chapters[i],previous:chapters.slice(0,i).filter(c=>c.text.trim()),budget:budget()})).json();put(chapters[i],j.text)}
-async function rev(i,ins){const j=await(await api('/api/revise',{guide:$('guide').value,idea:idea(),chapter:chapters[i],instruction:ins,budget:budget()})).json();put(chapters[i],j.text);toast(t('已修订：','Revised: ')+chapters[i].title)}
+async function gen(i){const j=await(await api('/api/chapter',{guide:$('guide').value,idea:idea(),chapter:chapters[i],previous:chapters.slice(0,i).filter(c=>c.text.trim()),budget:budget(),unit:lim().u})).json();put(chapters[i],j.text);
+ const b=budget();if(b&&meas(chapters[i].text)>b*1.15)await rev(i,`压缩到不超过 ${b} ${lim().u=='words'?'词':'字'}，保留关键内容和所有 [待补充] 标记`,b)}
+async function rev(i,ins,bud){const j=await(await api('/api/revise',{guide:$('guide').value,idea:idea(),chapter:chapters[i],instruction:ins,budget:bud??budget(),unit:lim().u})).json();put(chapters[i],j.text);toast(t('已修订：','Revised: ')+chapters[i].title)}
 async function checkFn(){const cs=chapters.filter(c=>c.text.trim());if(!cs.length)throw new Error(t('请先撰写章节','Write some chapters first'));
- items=(await(await api('/api/check',{guide:$('guide').value,chapters:cs})).json()).items;save();report()}
+ items=(await(await api('/api/check',{guide:$('guide').value,chapters:cs,count:total(),unit:lim().u})).json()).items;save();report()}
 $('chk').onclick=()=>busy($('chk'),checkFn);
-async function fitFn(){const b=budget();for(let k=0;k<chapters.length;k++)if(b&&chapters[k].text.length>b*1.05)await rev(k,`压缩到不超过 ${b} 字，保留关键内容和所有 [待补充] 标记`)}
+async function fitFn(say){const L=limit();if(!L)return; // up to 3 passes; every chapter is squeezed in proportion to its length
+ for(let pass=0;pass<3&&total()>L;pass++){const scale=L*(pass?.85:.92)/total();
+  for(let k=0;k<chapters.length;k++){const cur=meas(chapters[k].text);if(!cur)continue;const tg=Math.max(50,Math.floor(cur*scale));
+   if(say)say(t(`超过字数上限，正在压缩（第 ${pass+1} 轮，第 ${k+1} / ${chapters.length} 章）…`,`Over the limit, shortening (pass ${pass+1}, chapter ${k+1} of ${chapters.length})…`));
+   await rev(k,`压缩到不超过 ${tg} ${lim().u=='words'?'词':'字'}，保留关键内容和所有 [待补充] 标记`,tg)}}}
 function report(){if(!items.length){$('rt').className='mut';$('rt').textContent=t('尚未检查。完成章节撰写后点击下方按钮，逐条对照指南要求。','Not checked yet. Write the chapters, then click the button below to compare every guide requirement with the draft.');return}
  const c=s=>items.filter(x=>x.status==s).length,un=chapters.filter(x=>!x.text.trim()).length,S={ok:t('满足','Met'),partial:t('部分','Partial'),missing:t('缺失','Missing')};
  $('rt').className='';$('rt').innerHTML=`<div class="sum"><div><b>${Math.round((c('ok')+c('partial')/2)/items.length*100)}%</b><span>${t('综合符合度','Overall match')}</span></div><div><b style="color:var(--ok)">${c('ok')}</b><span>${t('已满足','Met')}</span></div><div><b style="color:var(--wa)">${c('partial')}</b><span>${t('部分满足','Partly met')}</span></div><div><b style="color:var(--er)">${c('missing')}</b><span>${t('缺失','Missing')}</span></div></div>
@@ -245,7 +261,7 @@ const done=()=>{const c=chapters.filter(x=>x.text.trim());if(!c.length)throw new
 function preview(){const c=chapters.filter(x=>x.text.trim());$('doc').innerHTML=c.length?`<h1>${esc(title())}</h1><div class="by">${esc([$('m-org').value,$('m-lead').value].filter(Boolean).join('　'))}</div>
  <div class="toc">${c.map((x,i)=>`<div>${i+1}. ${esc(x.title)}</div>`).join('')}</div>${c.map((x,i)=>`<h2>${i+1}. ${esc(x.title)}</h2>${x.text.split('\n').filter(l=>l.trim()).map(l=>`<p>${esc(l.replace(/^[#*\s]+/,'').replace(/\*\*/g,''))}</p>`).join('')}`).join('')}`:`<p style="text-indent:0;color:#777">${t('尚无内容。','Nothing to show yet.')}</p>`}
 function dl(b,n){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=n;a.click()}
-$('exp').onclick=()=>busy($('exp'),async()=>{dl(await(await api('/api/export',{title:title(),chapters:done()})).blob(),'proposal.docx')});
+$('exp').onclick=()=>busy($('exp'),async()=>{if(limit()&&total()>limit()&&!confirm(t('当前超出字数上限，仍要导出吗？','The text is over the limit. Export anyway?')))return;dl(await(await api('/api/export',{title:title(),chapters:done()})).blob(),'proposal.docx')});
 $('mdx').onclick=()=>{try{dl(new Blob([`# ${title()}\n\n`+done().map(x=>`## ${x.title}\n\n${x.text}\n`).join('\n')],{type:'text/markdown'}),'proposal.md')}catch(e){$('err').textContent=e.message}};
 $('cpy').onclick=async()=>{try{await navigator.clipboard.writeText(done().map(x=>x.title+'\n'+x.text).join('\n\n'));toast(t('已复制','Copied'))}catch(e){$('err').textContent=e.message}};
 const fmt=u=>new Date(u*1000).toLocaleString(lang=='en'?'en-GB':'zh-CN',{dateStyle:'medium',timeStyle:'short'});
@@ -266,6 +282,7 @@ $('af').onsubmit=async e=>{e.preventDefault();$('ae').textContent='';
 $('out').onclick=async()=>{await sync();await api('/api/logout',{});me=null;admin=false;reg=false;setState();showAuth();render();report()};
 function enter(){let s;try{s=JSON.parse(localStorage[LS+':'+me]||localStorage[LS]||'null')}catch(e){}setState(s);showAuth();applyLang();if(chapters.length||$('guide').value.trim())sync()}
 let stop=false;
+$('ovrfit').onclick=e=>busy(e.currentTarget,async()=>{await fitFn();render()});
 $('astop').onclick=()=>{stop=true;$('atx').textContent=t('正在停止…（当前这一步完成后停下）','Stopping… (after the current step)')};
 $('auto').onclick=async()=>{const B=$('auto'),bar=$('abar'),say=m=>$('atx').textContent=m;
  if(!$('guide').value.trim()){$('err').textContent=t('请先提供申报指南','Please provide the funding guide first');return}
@@ -273,11 +290,11 @@ $('auto').onclick=async()=>{const B=$('auto'),bar=$('abar'),say=m=>$('atx').text
  stop=false;B.disabled=$('plan').disabled=true;bar.hidden=false;$('ready').hidden=true;$('err').textContent='';let step=t('规划章节','planning');
  try{say(t('自动模式 · 1/4 正在规划章节…','Auto mode · 1/4 planning chapters…'));await planFn();tab('ed');
   step=t('撰写章节','writing');for(let k=0;k<chapters.length&&!stop;k++){cur=k;render();say(t(`自动模式 · 2/4 正在撰写第 ${k+1} / ${chapters.length} 章…`,`Auto mode · 2/4 writing chapter ${k+1} of ${chapters.length}…`));await gen(k);render()}
-  if(!stop&&limit()&&chapters.reduce((a,c)=>a+c.text.length,0)>limit()){say(t('自动模式 · 2/4 超过字数上限，正在压缩…','Auto mode · 2/4 over the word limit, shortening…'));await fitFn();render()}
+  if(!stop&&limit()&&total()>limit()){await fitFn(m=>say(t('自动模式 · 2/4 ','Auto mode · 2/4 ')+m));render()}
   if(!stop){tab('ck');step=t('检查','checking');say(t('自动模式 · 3/4 正在逐条检查合规性…','Auto mode · 3/4 checking every requirement…'));await checkFn()}
   if(stop){say(t('已停止。已完成的内容已保存，可手动继续。','Stopped. Finished work is saved; continue by hand.'));return}
-  tab('pv');const c=k=>items.filter(x=>x.status==k).length;
-  $('ready').textContent=t(`✅ 申报书已生成完成，现在可以检查并下载。合规检查：满足 ${c('ok')} / ${items.length} 项。`,`✅ Your proposal is ready. You can now review and download it. Compliance: ${c('ok')} of ${items.length} requirements met.`);$('ready').hidden=false;
+  tab('pv');const c=k=>items.filter(x=>x.status==k).length,still=limit()&&total()>limit();
+  $('ready').classList.toggle('err',!!still);$('ready').textContent=still?t(`⚠ 申报书已生成，但仍超出字数上限 ${fnum(total()-limit())} ${unitS()}，请手动压缩后再导出。`,`⚠ The proposal is generated but still ${fnum(total()-limit())} ${unitS()} over the limit. Shorten it by hand before exporting.`):t(`✅ 申报书已生成完成，现在可以检查并下载。合规检查：满足 ${c('ok')} / ${items.length} 项。`,`✅ Your proposal is ready. You can now review and download it. Compliance: ${c('ok')} of ${items.length} requirements met.`);$('ready').hidden=false;
   bar.hidden=true;toast(t('申报书已完成，可以检查并下载','Proposal ready: review and download it'))}
  catch(e){$('err').textContent=t(`自动模式在“${step}”出错：`,`Auto mode failed while ${step}: `)+e.message;say(t('自动模式已中断，已完成的内容已保存。','Auto mode interrupted; finished work is saved.'))}
  finally{B.disabled=$('plan').disabled=false}};
