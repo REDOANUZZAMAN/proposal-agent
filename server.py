@@ -223,7 +223,7 @@ class H(BaseHTTPRequestHandler):
             if u.path == "/api/revise":
                 return self._send(200, {"text": agent.revise(j["guide"], j.get("idea", ""), j["chapter"], j["instruction"], j.get("budget"), j.get("unit", "chars"))})
             if u.path == "/api/check":
-                return self._send(200, agent.check(j["guide"], j["chapters"], j.get("count"), j.get("unit", "chars")))
+                return self._send(200, agent.check(j["guide"], j["chapters"], j.get("count"), j.get("unit", "chars"), j.get("info", "")))
             if u.path == "/api/export":
                 m = j["model"]
                 if not isinstance(m, dict) or not isinstance(m.get("chapters"), list) or len(m["chapters"]) > 100:

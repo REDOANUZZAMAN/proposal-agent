@@ -36,11 +36,12 @@ def chapter(guide, idea, ch, previous, budget=None, unit="chars"):
                              f"# Write this chapter: {ch['title']}\nInstruction: {ch['prompt']}\nRequirements:\n{reqs}{_cap(budget, unit)}")
 
 
-def check(guide, chapters, count=None, unit="chars"):
+def check(guide, chapters, count=None, unit="chars", info=""):
     draft = "\n\n".join(f"## {c['title']}\n{c['text']}" for c in chapters)
     n = count if count is not None else sum(len(c["text"]) for c in chapters)      # exact count (same rule as the UI): models cannot count length reliably
     u = "words" if unit == "words" else "characters"
-    return chat_json(CHECK_SYS, f"# Guide\n{guide}\n\n# Draft (exactly {n} {u} in total, spaces and line breaks not counted)\n{draft}")
+    form = f"\n\n# Applicant information (cover page and form; counts as part of the submission)\n{info}" if info else ""
+    return chat_json(CHECK_SYS, f"# Guide\n{guide}{form}\n\n# Draft (exactly {n} {u} in total, spaces and line breaks not counted)\n{draft}")
 
 
 REVISE_SYS = f"""You revise one chapter of a project proposal. Apply the instruction/issues exactly, keep everything else that is good.

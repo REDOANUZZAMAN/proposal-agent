@@ -260,7 +260,7 @@ async function gen(i){const j=await(await api('/api/chapter',{guide:$('guide').v
  const b=budget();if(b&&meas(chapters[i].text)>b*1.15)await rev(i,`压缩到不超过 ${b} ${lim().u=='words'?'词':'字'}，保留关键内容和所有 [待补充] 标记`,b)}
 async function rev(i,ins,bud){const j=await(await api('/api/revise',{guide:$('guide').value,idea:idea(),chapter:chapters[i],instruction:ins,budget:bud??budget(),unit:lim().u})).json();put(chapters[i],j.text);toast(t('已修订：','Revised: ')+chapters[i].title)}
 async function checkFn(){const cs=chapters.filter(c=>c.text.trim());if(!cs.length)throw new Error(t('请先撰写章节','Write some chapters first'));
- items=(await(await api('/api/check',{guide:$('guide').value,chapters:cs,count:total(),unit:lim().u})).json()).items;save();report()}
+ items=(await(await api('/api/check',{guide:$('guide').value,chapters:cs,count:total(),unit:lim().u,info:idea()})).json()).items;save();report()}
 $('chk').onclick=()=>busy($('chk'),checkFn);
 async function fitFn(say){const L=limit();if(!L)return; // up to 3 passes; every chapter is squeezed in proportion to its length
  for(let pass=0;pass<3&&total()>L;pass++){const scale=L*(pass?.85:.92)/total();
