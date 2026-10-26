@@ -8,6 +8,7 @@ import agent, docx_out
 ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC = os.path.join(ROOT, "static")
 DATA = os.path.join(ROOT, "data")
+ICONS = {"/favicon.svg": "image/svg+xml", "/favicon.ico": "image/x-icon", "/apple-touch-icon.png": "image/png"}
 MAX_REPORT = 3_000_000            # bytes of JSON per saved report
 os.makedirs(DATA, exist_ok=True)
 
@@ -218,6 +219,9 @@ class H(BaseHTTPRequestHandler):
         if m:
             r = db.execute("SELECT data FROM reports WHERE id=? AND user=?", (int(m[1]), self.user())).fetchone()
             return self._send(200, json.loads(r[0])) if r else self._send(404, {"error": "not found"})
+        if path in ICONS:
+            with open(os.path.join(STATIC, path[1:]), "rb") as f:
+                return self._send(200, f.read(), ICONS[path], {"Cache-Control": "public, max-age=86400"})
         if path in ("/", "/index.html"):
             return self._send(200, open(os.path.join(STATIC, "index.html"), "rb").read(), "text/html")
         if path == "/api/sample":
