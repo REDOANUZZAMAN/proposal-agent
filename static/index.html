@@ -130,8 +130,8 @@ option{background:var(--card);color:var(--tx)}
 <div><label>实施周期</label><input id="m-dur" placeholder="如 18 个月"></div><div><label>申请经费（万元）</label><input id="m-fund"></div><div><label>自筹经费（万元）</label><input id="m-self"></div></div>
 <label class="l">项目想法（要解决的问题、拟用方法、已有基础）</label><textarea id="idea" placeholder="缺失的信息会标为 [待补充]，系统不会编造数据或单位名称"></textarea></div>
 <div class="sec"><h2>写作要求</h2><div class="grid">
-<div><label>语气</label><select id="s-tone"><option value="正式、学术">正式、学术</option><option value="简洁、务实">简洁、务实</option><option value="通俗易懂">通俗易懂</option></select></div>
-<div><label>详略</label><select id="s-len"><option value="">按指南</option><option value="每章力求简明">每章力求简明</option><option value="每章充分展开、论证详尽">每章充分展开、论证详尽</option></select></div></div>
+<div><label>语气</label><select id="s-tone"><option value="正式、学术">正式、学术</option><option value="简洁、务实">简洁、务实</option><option value="通俗易懂">通俗易懂</option><option value="说服力强、突出价值与意义">说服力强、突出价值与意义</option><option value="严谨、技术导向">严谨、技术导向</option><option value="政策导向、贴合指南用语">政策导向、贴合指南用语</option></select></div>
+<div><label>详略</label><select id="s-len"><option value="">按指南</option><option value="每章力求简明">每章力求简明</option><option value="适中篇幅、重点突出">适中篇幅、重点突出</option><option value="每章充分展开、论证详尽">每章充分展开、论证详尽</option></select></div></div>
 <div class="row"><button class="p" id="plan">生成章节规划</button><button class="p" id="auto" title="">自动模式</button><span class="mut">系统读取指南，列出所需章节、各章提示词及必须满足的要求。自动模式：一键完成规划、撰写、检查并跳到导出页</span></div></div>
 </div>
 
@@ -165,7 +165,7 @@ const EN={'项目申报书生成系统':'Project Proposal Generator','Proposal A
 '项目基本信息':'Project details','项目名称':'Project title','申报单位':'Applicant organisation','项目负责人':'Project lead','实施周期':'Duration','如 18 个月':'e.g. 18 months',
 '申请经费（万元）':'Requested funds (10k CNY)','自筹经费（万元）':'Self-funded (10k CNY)','项目想法（要解决的问题、拟用方法、已有基础）':'Project idea (problem, planned method, existing foundation)',
 '缺失的信息会标为 [待补充]，系统不会编造数据或单位名称':'Missing facts are marked [待补充]; the system will not invent data or names',
-'写作要求':'Writing requirements','语气':'Tone','正式、学术':'Formal, academic','简洁、务实':'Concise, practical','通俗易懂':'Plain and easy','详略':'Level of detail','按指南':'Follow the guide','每章力求简明':'Keep each chapter brief','每章充分展开、论证详尽':'Develop each chapter fully',
+'写作要求':'Writing requirements','语气':'Tone','正式、学术':'Formal, academic','简洁、务实':'Concise, practical','通俗易懂':'Plain and easy','说服力强、突出价值与意义':'Persuasive, stress value and impact','严谨、技术导向':'Rigorous, technical','政策导向、贴合指南用语':'Policy-oriented, echo the guide\'s wording','适中篇幅、重点突出':'Moderate length, key points first','详略':'Level of detail','按指南':'Follow the guide','每章力求简明':'Keep each chapter brief','每章充分展开、论证详尽':'Develop each chapter fully',
 '生成章节规划':'Plan chapters',
 '合规检查':'Compliance check','开始检查':'Start check','按检查意见自动修订':'Auto-revise from check results','导出 Word':'Export Word','导出 Markdown':'Export Markdown','复制全文':'Copy all text','下方为排版预览':'Layout preview below'};
 const stat=[];(function(){const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let n;
