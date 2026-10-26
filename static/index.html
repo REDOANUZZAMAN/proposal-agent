@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!doctype html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,">
 <title>项目申报书生成系统 · Proposal Agent</title>
 <style>
 :root{--bg:#f3efe6;--card:#fffdf8;--tx:#221f1c;--mut:#70675c;--bd:#ddd3c2;--ac:#8b1e2d;--acbg:#f6e7e4;--gold:#b8892b;--navy:#1d3557;--ok:#2e6b3f;--wa:#8a5a00;--er:#9b2c2c;--serif:Georgia,"Noto Serif SC","Songti SC",SimSun,serif}
@@ -28,11 +28,17 @@ label.l{font-size:12px;color:var(--mut);display:block;margin:10px 0 3px}
 .tag.ok{background:#e4f1e7}.tag.partial{background:#fbf1d9}.tag.missing{background:#f8e3e1}.tag{font-size:12px;padding:1px 8px;border:1px solid var(--bd);color:var(--mut);border-radius:2px}.tag.ok{color:var(--ok);border-color:var(--ok)}.tag.partial{color:var(--wa);border-color:var(--wa)}.tag.missing{color:var(--er);border-color:var(--er)}
 table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid var(--bd);padding:7px 8px;text-align:left;vertical-align:top;font-size:13px}th{color:var(--mut);font-weight:600;background:var(--bg)}
 .sum{display:flex;gap:28px;margin-bottom:12px;flex-wrap:wrap}.sum div{min-width:90px}.sum b{display:block;font:600 26px var(--serif);color:var(--navy)}.sum span{font-size:12px;color:var(--mut)}
-.doc{background:#fff;color:#111;border:1px solid var(--bd);max-width:780px;margin:0 auto;padding:46px 54px;font:15px/1.9 var(--serif)}
-.doc h1{text-align:center;font-size:22px;margin:0 0 6px}.doc .by{text-align:center;color:#555;font-size:13px;margin-bottom:24px}.doc h2{font-size:17px;margin:24px 0 6px}.doc p{margin:0 0 6px;text-indent:2em;white-space:pre-wrap}.doc .toc{border:1px solid #ddd;padding:8px 16px;font-size:13px;margin-bottom:12px}.doc .toc div{padding:1px 0}
+.pgs{display:grid;gap:18px;justify-items:center}
+.sheet{background:#fff;color:#000;width:100%;max-width:794px;box-sizing:border-box;padding:96px 120px;font:12pt/1.5 "Times New Roman","SimSun","Songti SC","Noto Serif SC",serif;box-shadow:0 2px 12px rgba(40,25,10,.18);border:1px solid var(--bd);position:relative}
+.sheet{aspect-ratio:210/297}.sheet h1,.sheet h2,.sheet h3{font-family:Arial,"SimHei","Heiti SC","Noto Sans SC",sans-serif}
+.sheet .lab{text-align:center;font:700 26pt/1.2 Arial,"SimHei","Noto Sans SC",sans-serif;margin:120px 0 70px}.sheet .ttl{text-align:center;font:700 18pt/1.5 Arial,"SimHei","Noto Sans SC",sans-serif;margin:0 0 60px}
+.sheet table.ci{border-collapse:collapse;margin:0 auto;width:100%}.sheet table.ci td{border:0;padding:8px 6px;font-size:14pt;vertical-align:bottom;color:#000}.sheet table.ci td:first-child{text-align:right;width:36%;font-family:Arial,"SimHei","Noto Sans SC",sans-serif;font-weight:700}.sheet table.ci td:last-child{border-bottom:1px solid #000;text-align:center}
+.sheet h3.ct{text-align:center;font-size:16pt;margin:0 0 24px}.sheet .ce{padding:3px 0 3px 2em}
+.sheet h1{font-size:16pt;margin:18px 0 6px}.sheet h2{font-size:14pt;margin:12px 0 4px}.sheet p{margin:0;text-indent:2em;text-align:justify;white-space:pre-wrap}.sheet.en p{text-indent:0;margin:0 0 6px}
+.sheet .sg{margin:18px 0;line-height:2.4}.sheet .ul{display:inline-block;min-width:11em;border-bottom:1px solid #000}.sheet .pn{position:absolute;left:0;right:0;bottom:38px;text-align:center;font-size:10.5pt;color:#000}.pgbar{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;width:100%;max-width:794px}.pgbar select{width:auto;min-width:130px}.pgbar button{padding:6px 16px}.pnote{text-align:center;color:var(--mut);font-size:12px;margin:2px 0 10px}
 #err{color:var(--er);white-space:pre-wrap;margin-bottom:10px}.toast{position:fixed;right:18px;bottom:18px;background:var(--tx);color:var(--bg);padding:8px 14px;border-radius:3px;opacity:0;transition:.25s;pointer-events:none}.toast.on{opacity:1}
 .pane{display:none}.pane.on{display:block}
-@media(max-width:820px){.wrap{grid-template-columns:1fr}aside{border-right:0;border-bottom:1px solid var(--bd)}.doc{padding:24px 18px}}
+@media(max-width:820px){.wrap{grid-template-columns:1fr}aside{border-right:0;border-bottom:1px solid var(--bd)}.sheet{padding:28px 20px}.sheet{aspect-ratio:auto;min-height:420px}}
 
 /* forms */
 textarea,input,select{background:color-mix(in srgb,var(--card) 70%,var(--bg));border:1px solid var(--bd);border-radius:6px;padding:9px 11px;transition:border-color .15s,box-shadow .15s,background .15s}
@@ -86,11 +92,11 @@ option{background:var(--card);color:var(--tx)}
  #rt table,#rt tbody,#rt tr,#rt td,#rt th{display:block;width:auto!important}#rt table tr:first-child{display:none}
  #rt table tr{border:1px solid var(--bd);border-radius:6px;padding:8px 10px;margin-bottom:8px;background:var(--card)}#rt td{border:0;padding:2px 0}
  #rt td:nth-child(3):before{content:"位置：";color:var(--mut)}#rt td:nth-child(2){padding:4px 0}
- .doc{padding:22px 16px;font-size:14.5px;line-height:1.85}.doc h1{font-size:19px}
+ .sheet{padding:26px 18px;font-size:11.5pt}.sheet .lab{font-size:20pt;margin:30px 0 20px}.sheet .ttl{font-size:15pt;margin-bottom:30px}.sheet table.ci td{font-size:11.5pt}
  h2 .tag{float:none!important;display:inline-block;margin-left:8px;vertical-align:middle}
 }
 @media(max-width:380px){.grid{grid-template-columns:1fr}.tabs button{font-size:11px}}
-@media print{header,aside,.tabs,#err,.toast,#p-pv .row{display:none!important}.wrap{display:block}main{padding:0}.doc{border:0;max-width:none;padding:0}}
+@media print{header,aside,.tabs,#err,.toast,#p-pv .row{display:none!important}.wrap{display:block}main{padding:0}.pgs{display:block}.pgbar{display:none}.sheet{border:0;box-shadow:none;max-width:none;padding:0;break-after:page;min-height:0}.sheet .pn{display:none}@page{size:A4;margin:25.4mm 31.7mm}}
 .hi,.hik{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center;border:1px solid var(--bd);border-radius:6px;padding:10px 12px;margin-bottom:8px;background:var(--card)}.hi b{font-weight:600}.hi.cur{border-color:var(--ac);background:var(--acbg)}.hi .row{margin:0}
 .tabs button.done:after{content:" ✓";color:var(--ok);font-weight:700}
 #ready{background:#e4f1e7;color:#1f4d2c;border:1px solid var(--ok);border-left-width:4px;border-radius:6px;padding:10px 14px;margin-bottom:12px;font-weight:600}@media(prefers-color-scheme:dark){#ready{background:#1d3324;color:#bfe3c9}}#abar{display:flex;align-items:center;flex-wrap:wrap}#abar[hidden]{display:none}.nav a.on .dot.f{color:#fff;border-color:var(--ok)}
@@ -157,7 +163,7 @@ option{background:var(--card);color:var(--tx)}
 
 <div class="pane" id="p-hs"><div class="sec"><h2>历史记录</h2><div class="row" style="margin:0 0 10px"><button class="p" id="newr">新建申报书</button><span class="mut">每份申报书会自动保存到你的账号</span></div><div id="hl"></div></div></div>
 
-<div class="pane" id="p-pv"><div id="ready" hidden></div><div class="row" style="margin:0 0 12px"><button class="p" id="exp">导出 Word</button><button id="mdx">导出 Markdown</button><button id="cpy">复制全文</button><span class="mut">下方为排版预览</span></div><div class="doc" id="doc"></div></div>
+<div class="pane" id="p-pv"><div id="ready" hidden></div><div class="row" style="margin:0 0 12px"><button class="p" id="exp">导出 Word</button><button id="mdx">导出 Markdown</button><button id="cpy">复制全文</button><span class="mut">下方为排版预览</span></div><div class="pnote" id="pnote"></div><div class="pgs" id="doc"></div></div>
 </main></div><div id="auth"><button id="al" type="button">EN</button><div class="ab">
 <div class="abl"><div class="logo">申</div><h1>项目申报书生成系统</h1><p>Proposal Agent</p><ul><li>读取申报指南，自动规划章节</li><li>逐章撰写，缺失的事实标记而不编造</li><li>逐条合规检查，一键导出 Word</li></ul></div>
 <form id="af"><div class="seg" id="seg"><button type="button" data-m="login">登录</button><button type="button" data-m="register">注册</button></div>
@@ -271,10 +277,53 @@ $('fix').onclick=()=>busy($('fix'),async()=>{if(!items.length)throw new Error(t(
   await rev(i,'请修正以下问题：\n'+bad.map(x=>`- ${x.requirement}：${x.note}`).join('\n'));n++}
  toast(n?t(`已修订 ${n} 章，请重新检查（可在章节页撤销）`,`Revised ${n} chapter(s). Check again (you can undo on the chapter page).`):t('没有可自动修订的章节；缺失的章节请先撰写','Nothing to auto-revise; write the missing chapters first'));side()});
 const done=()=>{const c=chapters.filter(x=>x.text.trim());if(!c.length)throw new Error(t('请先撰写章节','Write some chapters first'));return c},title=()=>$('m-name').value.trim()||t('项目申报书','Project Proposal');
-function preview(){const c=chapters.filter(x=>x.text.trim());$('doc').innerHTML=c.length?`<h1>${esc(title())}</h1><div class="by">${esc([$('m-org').value,$('m-lead').value].filter(Boolean).join('　'))}</div>
- <div class="toc">${c.map((x,i)=>`<div>${i+1}. ${esc(x.title)}</div>`).join('')}</div>${c.map((x,i)=>`<h2>${i+1}. ${esc(x.title)}</h2>${x.text.split('\n').filter(l=>l.trim()).map(l=>`<p>${esc(l.replace(/^[#*\s]+/,'').replace(/\*\*/g,''))}</p>`).join('')}`).join('')}`:`<p style="text-indent:0;color:#777">${t('尚无内容。','Nothing to show yet.')}</p>`}
+const CNN='一二三四五六七八九十',cnum=n=>n<=10?CNN[n-1]:n<20?'十'+CNN[n-11]:CNN[Math.floor(n/10)-1]+'十'+(n%10?CNN[n%10-1]:'');
+const NUMSTRIP=/^\s*(?:第[一二三四五六七八九十百\d]+[章节]|[一二三四五六七八九十]+、|\d+(?:\.\d+)*[.、．)）]?)\s*/,clean=l=>l.replace(/^\s*#{1,6}\s*/,'').replace(/\*\*(.+?)\*\*/g,'$1').replace(/^\s*[-*•]\s+/,'').trim();
+function docModel(){const c=done(),en=!/[\u4e00-\u9fff]/.test(c.map(x=>x.title+x.text).join('').slice(0,800)),v=i=>$(i).value.trim(),d=new Date();
+ const L=en?{label:'Project Proposal',name:'Project title',org:'Applicant organisation',lead:'Project lead',dur:'Duration',fund:'Requested funds (10k CNY)',self:'Self-funded (10k CNY)',date:'Date',contents:'Contents',sign:'Signatures',
+  date_s:d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}),s:['Project lead (signature): {u}   Date: {u}','Opinion of the applicant organisation:','{u}','Head of organisation (signature and seal): {u}   Date: {u}']}
+  :{label:'项目申报书',name:'项目名称',org:'申报单位',lead:'项目负责人',dur:'实施周期',fund:'申请经费（万元）',self:'自筹经费（万元）',date:'申报日期',contents:'目　录',sign:'签字盖章页',
+  date_s:`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`,s:['项目负责人（签字）：{u}　日期：{u}','申报单位意见：','{u}','单位负责人（签字、盖章）：{u}　日期：{u}']};
+ const title=v('m-name')||L.label;
+ return{lang:en?'en':'zh',label:L.label,title,contents:L.contents,sign_title:L.sign,sign:L.s,
+  cover:[[L.name,v('m-name')],[L.org,v('m-org')],[L.lead,v('m-lead')],[L.dur,v('m-dur')],[L.fund,v('m-fund')],[L.self,v('m-self')],[L.date,L.date_s]].filter(r=>r[1]),
+  chapters:c.map((x,i)=>({title:(en?`${i+1}. `:`${cnum(i+1)}、`)+x.title.replace(NUMSTRIP,''),blocks:x.text.split('\n').filter(l=>l.trim()).map(l=>({k:/^\s*#{1,6}\s/.test(l)?'h2':'p',t:clean(l)})).filter(b=>b.t)}))}}
+let pvPages=[],pvLabels=[],pvPage=0;
+function paginate(m){const en=m.lang=='en',host=$('doc'),W=Math.min(794,host.clientWidth||794),pageH=W<600?Math.round(Math.max(W*297/210,innerHeight*1.4)):Math.round(W*297/210),mk=(tag,txt,cls)=>{const e=document.createElement(tag);e.textContent=txt;if(cls)e.className=cls;return e};
+ const probe=document.createElement('div');probe.className='sheet'+(en?' en':'');probe.style.cssText=`position:absolute;visibility:hidden;left:-9999px;top:0;width:${W}px;aspect-ratio:auto`;document.body.append(probe);
+ const cs=getComputedStyle(probe),H=pageH-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);probe.style.paddingTop=probe.style.paddingBottom='0';
+ const pages=[];let cur=[];const flush=()=>{if(cur.length)pages.push(cur.join(''));cur=[];probe.innerHTML=''},fits=()=>probe.offsetHeight<=H;
+ const put=e=>{probe.append(e);if(fits()){cur.push(e.outerHTML);return true}e.remove();return false};
+ for(const c of m.chapters){let hs=[mk('h1',c.title)],items=[...hs];c.blocks.forEach(b=>items.push(b.k=='h2'?mk('h2',b.t):b.t));
+  let pendingHead=null; // keep a heading together with the first lines of what follows it
+  for(const it of items){
+   if(typeof it!='string'){if(!put(it)){flush();put(it)}pendingHead=it;continue}
+   let rest=it,first=true;
+   while(rest){const e=mk('p','');if(!first)e.style.textIndent='0';probe.append(e);
+    e.textContent=rest;if(fits()){cur.push(e.outerHTML);rest='';pendingHead=null;break}
+    let lo=0,hi=rest.length;while(lo<hi){const mid=(lo+hi+1)>>1;e.textContent=rest.slice(0,mid);fits()?lo=mid:hi=mid-1}
+    if(en&&lo<rest.length){const sp=rest.lastIndexOf(' ',lo);if(sp>0)lo=sp}
+    if(lo<=0){e.remove();if(pendingHead&&cur.length){cur.pop();probe.lastElementChild.remove();flush();put(pendingHead);pendingHead=null}else if(cur.length)flush();else{e.textContent=rest.slice(0,1);probe.append(e);cur.push(e.outerHTML);rest=rest.slice(1);first=false;flush()}continue}
+    e.textContent=rest.slice(0,lo);cur.push(e.outerHTML);rest=rest.slice(lo).replace(/^ /,'');pendingHead=null;first=false;flush()}
+  }}
+ flush();probe.remove();return pages}
+function preview(){const has=chapters.some(x=>x.text.trim());$('pnote').textContent=has?t('标准申报书版式（A4，宋体小四，1.5 倍行距）。分页为预览估算，以导出的 Word 为准。','Standard proposal layout (A4, 12 pt, 1.5 line spacing). Page breaks are an estimate; the exported Word file is authoritative.'):'';
+ if(!has){pvPages=[];$('doc').innerHTML=`<div class="sheet"><p style="text-indent:0;color:#777">${t('尚无内容。','Nothing to show yet.')}</p></div>`;return}
+ const m=docModel(),en=m.lang=='en',cls=en?' en':'',u='<span class="ul"></span>',body=paginate(m),pn=n=>`<div class="pn">${n}</div>`;
+ pvPages=[`<div class="sheet${cls}"><div class="lab">${esc(m.label)}</div><table class="ci">${m.cover.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join('')}</table></div>`,
+  `<div class="sheet${cls}"><h3 class="ct">${esc(m.contents)}</h3>${m.chapters.map(x=>`<div class="ce">${esc(x.title)}</div>`).join('')}${pn(2)}</div>`,
+  ...body.map((b,i)=>`<div class="sheet${cls}">${b}${pn(i+3)}</div>`),
+  `<div class="sheet${cls}"><h3 class="ct">${esc(m.sign_title)}</h3>${m.sign.map(l=>`<div class="sg">${esc(l).replace(/\{u\}/g,u)}</div>`).join('')}${pn(body.length+3)}</div>`];
+ pvLabels=[t('封面','Cover'),t('目录','Contents'),...body.map((_,i)=>t(`第 ${i+3} 页`,`Page ${i+3}`)),t('签字盖章页','Signatures')];
+ pvPage=Math.min(pvPage,pvPages.length-1);showPage(pvPage)}
+function bar(){const n=pvPages.length;return`<div class="pgbar"><button data-pg="-1" ${pvPage?'':'disabled'}>‹ ${t('上一页','Previous')}</button><select data-jump aria-label="${t('跳转到页','Go to page')}">${pvLabels.map((l,i)=>`<option value="${i}" ${i==pvPage?'selected':''}>${l}</option>`).join('')}</select><span class="mut">${t(`第 ${pvPage+1} / ${n} 页`,`${pvPage+1} of ${n}`)}</span><button data-pg="1" ${pvPage<n-1?'':'disabled'}>${t('下一页','Next')} ›</button></div>`}
+function showPage(i,scroll){pvPage=Math.max(0,Math.min(i,pvPages.length-1));$('doc').innerHTML=bar()+pvPages[pvPage]+bar();if(scroll)$('pnote').scrollIntoView({block:'start'})}
+$('doc').onclick=e=>{const b=e.target.closest('[data-pg]');if(b&&!b.disabled)showPage(pvPage+ +b.dataset.pg,true)};
+$('doc').onchange=e=>{if(e.target.dataset.jump!=null)showPage(+e.target.value,true)};
+document.addEventListener('keydown',e=>{if(!$('p-pv').classList.contains('on')||!pvPages.length||/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)||e.ctrlKey||e.metaKey)return;if(e.key=='ArrowRight'||e.key=='PageDown'){showPage(pvPage+1,true);e.preventDefault()}if(e.key=='ArrowLeft'||e.key=='PageUp'){showPage(pvPage-1,true);e.preventDefault()}});
+addEventListener('beforeprint',()=>{if(pvPages.length&&$('p-pv').classList.contains('on'))$('doc').innerHTML=pvPages.join('')});addEventListener('afterprint',()=>{if(pvPages.length)showPage(pvPage)});
 function dl(b,n){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=n;a.click()}
-$('exp').onclick=()=>busy($('exp'),async()=>{if(limit()&&total()>limit()&&!confirm(t('当前超出字数上限，仍要导出吗？','The text is over the limit. Export anyway?')))return;dl(await(await api('/api/export',{title:title(),chapters:done()})).blob(),'proposal.docx')});
+$('exp').onclick=()=>busy($('exp'),async()=>{if(limit()&&total()>limit()&&!confirm(t('当前超出字数上限，仍要导出吗？','The text is over the limit. Export anyway?')))return;dl(await(await api('/api/export',{model:docModel()})).blob(),'proposal.docx')});
 $('mdx').onclick=()=>{try{dl(new Blob([`# ${title()}\n\n`+done().map(x=>`## ${x.title}\n\n${x.text}\n`).join('\n')],{type:'text/markdown'}),'proposal.md')}catch(e){$('err').textContent=e.message}};
 $('cpy').onclick=async()=>{try{await navigator.clipboard.writeText(done().map(x=>x.title+'\n'+x.text).join('\n\n'));toast(t('已复制','Copied'))}catch(e){$('err').textContent=e.message}};
 const fmt=u=>new Date(u*1000).toLocaleString(lang=='en'?'en-GB':'zh-CN',{dateStyle:'medium',timeStyle:'short'});
