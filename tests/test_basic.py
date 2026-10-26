@@ -7,7 +7,7 @@ from server import extract_text
 def _model():
     return {"lang": "zh", "label": "项目申报书", "title": "T <&>", "contents": "目　录", "sign_title": "签字盖章页",
             "sign": ["项目负责人（签字）：{u}　日期：{u}"], "cover": [["项目名称", "T <&>"], ["申报单位", "某大学"]],
-            "chapters": [{"title": "一、背景", "blocks": [{"k": "p", "t": "第一段"}, {"k": "h2", "t": "小节"}, {"k": "p", "t": "第二段 <&>\x0b"}]}]}
+            "chapters": [{"title": "一、背景", "blocks": [{"k": "p", "t": "第一段"}, {"k": "h2", "t": "小节"}, {"k": "p", "t": "第二段 <&>\x0b"}, {"k": "table", "rows": [["序号", "考核指标"], ["1", "准确率不低于90%"]]}]}]}
 
 
 def test_docx_standard_layout():
@@ -17,6 +17,7 @@ def test_docx_standard_layout():
     assert 'w:w="11906" w:h="16838"' in doc and "<w:titlePg/>" in doc            # A4, no number on the cover
     assert "宋体" in sty and 'w:line="360"' in sty and 'w:firstLineChars="200"' in sty    # 小四 body, 1.5 spacing, 2-char indent
     assert doc.count('w:val="Heading1"') == 1 and doc.count('w:val="Heading2"') == 1
+    assert doc.count("<w:tblHeader/>") == 1 and "准确率不低于90%" in doc and "|" not in doc          # real table, repeated header row
     assert " PAGE " in z.read("word/footer1.xml").decode()
     assert "\x0b" not in doc and "T &lt;&amp;&gt;" in doc                          # XML-safe
     assert extract_text("x.docx", docx_out.build(_model())).split("\n")[:4] == ["", "项目申报书", "项目名称", "T <&>"]

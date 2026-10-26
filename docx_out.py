@@ -55,6 +55,25 @@ def _cover_table(rows):
             f'<w:tblGrid><w:gridCol w:w="2500"/><w:gridCol w:w="4700"/></w:tblGrid>{trs}</w:tbl>')
 
 
+def _table(rows):
+    """Markdown-style grid -> bordered Word table, first row = bold shaded header repeated on every page."""
+    n = max(len(r) for r in rows)
+    width = lambda t: sum(2 if ord(ch) > 0x2E80 else 1 for ch in str(t))          # CJK characters are twice as wide
+    weights = [min(36, max(4, max((width(r[j]) for r in rows if j < len(r)), default=4))) for j in range(n)]
+    ws = [8306 * x // sum(weights) for x in weights]
+    edge = lambda e: f'<w:{e} w:val="single" w:sz="4" w:space="0" w:color="000000"/>'
+    trs = ""
+    for i, r in enumerate(rows):
+        cells = "".join(
+            f'<w:tc><w:tcPr><w:tcW w:w="{ws[j]}" w:type="dxa"/>{"<w:shd w:val=%sclear%s w:color=%sauto%s w:fill=%sE7E6E6%s/>" % ((chr(34),) * 6) if i == 0 else ""}</w:tcPr>'
+            + _p(_run(c, "<w:b/>" if i == 0 else ""), "TableText", '<w:jc w:val="center"/>' if i == 0 else "") + "</w:tc>"
+            for j, c in enumerate(list(r) + [""] * (n - len(r))))
+        trs += f'<w:tr><w:trPr><w:cantSplit/>{"<w:tblHeader/>" if i == 0 else ""}</w:trPr>{cells}</w:tr>'
+    return ('<w:tbl><w:tblPr><w:tblW w:w="8306" w:type="dxa"/><w:tblBorders>' + "".join(edge(e) for e in ("top", "left", "bottom", "right", "insideH", "insideV"))
+            + '</w:tblBorders><w:tblLayout w:type="fixed"/></w:tblPr><w:tblGrid>' + "".join(f'<w:gridCol w:w="{x}"/>' for x in ws) + f"</w:tblGrid>{trs}</w:tbl>"
+            '<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="120" w:lineRule="exact"/></w:pPr></w:p>')
+
+
 def _styles(zh):
     body_ind = '<w:ind w:firstLineChars="200" w:firstLine="480"/>' if zh else '<w:spacing w:after="120" w:line="360" w:lineRule="auto"/>'
     return (f'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles {NS}>'
@@ -67,6 +86,7 @@ def _styles(zh):
             f'<w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/><w:next w:val="BodyText"/><w:qFormat/><w:pPr><w:keepNext/><w:spacing w:before="360" w:after="120" w:line="360" w:lineRule="auto"/><w:outlineLvl w:val="0"/></w:pPr><w:rPr>{HEI}<w:b/><w:sz w:val="32"/><w:szCs w:val="32"/></w:rPr></w:style>'
             f'<w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:basedOn w:val="Normal"/><w:next w:val="BodyText"/><w:qFormat/><w:pPr><w:keepNext/><w:spacing w:before="240" w:after="80" w:line="360" w:lineRule="auto"/><w:outlineLvl w:val="1"/></w:pPr><w:rPr>{HEI}<w:b/><w:sz w:val="28"/><w:szCs w:val="28"/></w:rPr></w:style>'
             '<w:style w:type="paragraph" w:styleId="CoverCell"><w:name w:val="Cover Cell"/><w:basedOn w:val="Normal"/><w:pPr><w:spacing w:before="40" w:after="40" w:line="240" w:lineRule="auto"/></w:pPr></w:style>'
+            '<w:style w:type="paragraph" w:styleId="TableText"><w:name w:val="Table Text"/><w:basedOn w:val="Normal"/><w:pPr><w:spacing w:before="40" w:after="40" w:line="300" w:lineRule="auto"/></w:pPr><w:rPr><w:sz w:val="21"/><w:szCs w:val="21"/></w:rPr></w:style>'
             '<w:style w:type="paragraph" w:styleId="ContentsEntry"><w:name w:val="Contents Entry"/><w:basedOn w:val="Normal"/><w:pPr><w:spacing w:before="60" w:after="60"/><w:ind w:left="480"/></w:pPr></w:style>'
             '</w:styles>')
 
@@ -85,7 +105,10 @@ def build(model):
     for c in model.get("chapters", []):
         body += _p(_run(c["title"]), "Heading1")
         for b in c.get("blocks", []):
-            body += _p(_run(b["t"]), "Heading2" if b.get("k") == "h2" else "BodyText")
+            if b.get("k") == "table" and b.get("rows"):
+                body += _table(b["rows"])
+            else:
+                body += _p(_run(b.get("t", "")), "Heading2" if b.get("k") == "h2" else "BodyText")
     # signature page
     body += BREAK + _p(_run(model.get("sign_title", ""), "<w:sz w:val=\"32\"/><w:szCs w:val=\"32\"/>"), "Title", '<w:spacing w:before="0" w:after="480" w:line="240" w:lineRule="auto"/>')
     for line in model.get("sign", []):

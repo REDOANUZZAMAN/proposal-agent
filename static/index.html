@@ -35,7 +35,7 @@ table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid var(--bd
 .sheet table.ci{border-collapse:collapse;margin:0 auto;width:100%}.sheet table.ci td{border:0;padding:8px 6px;font-size:14pt;vertical-align:bottom;color:#000}.sheet table.ci td:first-child{text-align:right;width:36%;font-family:Arial,"SimHei","Noto Sans SC",sans-serif;font-weight:700}.sheet table.ci td:last-child{border-bottom:1px solid #000;text-align:center}
 .sheet h3.ct{text-align:center;font-size:16pt;margin:0 0 24px}.sheet .ce{padding:3px 0 3px 2em}
 .sheet h1{font-size:16pt;margin:18px 0 6px}.sheet h2{font-size:14pt;margin:12px 0 4px}.sheet p{margin:0;text-indent:2em;text-align:justify;white-space:pre-wrap}.sheet.en p{text-indent:0;margin:0 0 6px}
-.sheet .sg{margin:18px 0;line-height:2.4}.sheet .ul{display:inline-block;min-width:11em;border-bottom:1px solid #000}.sheet .pn{position:absolute;left:0;right:0;bottom:38px;text-align:center;font-size:10.5pt;color:#000}.pgbar{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;width:100%;max-width:794px}.pgbar select{width:auto;min-width:130px}.pgbar button{padding:6px 16px}.pnote{text-align:center;color:var(--mut);font-size:12px;margin:2px 0 10px}
+.sheet table.tb{border-collapse:collapse;width:100%;margin:6px 0 8px;font-size:10.5pt}.sheet table.tb td{border:1px solid #000;padding:3px 6px;vertical-align:top;text-indent:0;color:#000}.sheet table.tb tr:first-child td{font-weight:700;background:#e7e6e6;text-align:center}.sheet .sg{margin:18px 0;line-height:2.4}.sheet .ul{display:inline-block;min-width:11em;border-bottom:1px solid #000}.sheet .pn{position:absolute;left:0;right:0;bottom:38px;text-align:center;font-size:10.5pt;color:#000}.pgbar{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;width:100%;max-width:794px}.pgbar select{width:auto;min-width:130px}.pgbar button{padding:6px 16px}.pnote{text-align:center;color:var(--mut);font-size:12px;margin:2px 0 10px}
 #err{color:var(--er);white-space:pre-wrap;margin-bottom:10px}.toast{position:fixed;right:18px;bottom:18px;background:var(--tx);color:var(--bg);padding:8px 14px;border-radius:3px;opacity:0;transition:.25s;pointer-events:none}.toast.on{opacity:1}
 .pane{display:none}.pane.on{display:block}
 @media(max-width:820px){.wrap{grid-template-columns:1fr}aside{border-right:0;border-bottom:1px solid var(--bd)}.sheet{padding:28px 20px}.sheet{aspect-ratio:auto;min-height:420px}}
@@ -163,7 +163,7 @@ option{background:var(--card);color:var(--tx)}
 
 <div class="pane" id="p-hs"><div class="sec"><h2>历史记录</h2><div class="row" style="margin:0 0 10px"><button class="p" id="newr">新建申报书</button><span class="mut">每份申报书会自动保存到你的账号</span></div><div id="hl"></div></div></div>
 
-<div class="pane" id="p-pv"><div id="ready" hidden></div><div class="row" style="margin:0 0 12px"><button class="p" id="exp">导出 Word</button><button id="mdx">导出 Markdown</button><button id="cpy">复制全文</button><span class="mut">下方为排版预览</span></div><div class="pnote" id="pnote"></div><div class="pgs" id="doc"></div></div>
+<div class="pane" id="p-pv"><div id="ready" hidden></div><div class="req" id="limitnote">⚠ 局限：模型仍可能写出空泛或较弱的内容。提交前请人工通读并修改，并把每处 [待补充] 换成真实信息。</div><div class="row" style="margin:0 0 12px"><button class="p" id="exp">导出 Word</button><button id="mdx">导出 Markdown</button><button id="cpy">复制全文</button><span class="mut">下方为排版预览</span></div><div class="pnote" id="pnote"></div><div class="pgs" id="doc"></div></div>
 </main></div><div id="auth"><button id="al" type="button">EN</button><div class="ab">
 <div class="abl"><div class="logo">申</div><h1>项目申报书生成系统</h1><p>Proposal Agent</p><ul><li>读取申报指南，自动规划章节</li><li>逐章撰写，缺失的事实标记而不编造</li><li>逐条合规检查，一键导出 Word</li></ul></div>
 <form id="af"><div class="seg" id="seg"><button type="button" data-m="login">登录</button><button type="button" data-m="register">注册</button></div>
@@ -178,7 +178,7 @@ let lang,admin=false;try{lang=localStorage[LL]}catch(e){}const saved=!!lang;lang
 const t=(z,e)=>lang=='en'?e:z;
 // static UI text: Chinese -> English (dynamic text uses t() inline)
 const EN={'项目申报书生成系统':'Project Proposal Generator','Proposal Agent · 依据申报指南分章节撰写、检查与修订':'Proposal Agent · draft, check and revise chapter by chapter from the funding guide',
-'载入示例':'Load sample','清空':'Clear','压缩到字数上限':'Shorten to the limit','管理后台':'Admin','登录':'Log in','注册':'Register','显示':'Show','隐藏':'Hide','读取申报指南，自动规划章节':'Reads the funding guide and plans the chapters','逐章撰写，缺失的事实标记而不编造':'Writes chapter by chapter; missing facts are flagged, never invented','逐条合规检查，一键导出 Word':'Checks every requirement, then exports to Word','自动模式':'Auto mode','系统读取指南，列出所需章节、各章提示词及必须满足的要求。自动模式：一键完成规划、撰写、检查并跳到导出页':'Reads the guide and lists the required chapters, a prompt for each, and the rules it must meet. Auto mode: plan, write, check and jump to export in one click','停止':'Stop','退出':'Log out','历史记录':'History','新建申报书':'New report','每份申报书会自动保存到你的账号':'Every report is saved to your account automatically','下一步：预览与导出 →':'Next: preview & export →','用户名':'Username','密码':'Password','邀请码':'Invite code','登录后，申报书会自动保存，可在“历史记录”中再次打开。':'After you log in, reports are saved automatically and can be reopened from History.','撰写进度':'Progress','字数':'Word count','章节':'Chapters','质量':'Quality',
+'载入示例':'Load sample','清空':'Clear','⚠ 局限：模型仍可能写出空泛或较弱的内容。提交前请人工通读并修改，并把每处 [待补充] 换成真实信息。':'⚠ Limitation: the model can still write generic or weak text. Read and edit it before you submit, and replace every [待补充] marker with real facts.','压缩到字数上限':'Shorten to the limit','管理后台':'Admin','登录':'Log in','注册':'Register','显示':'Show','隐藏':'Hide','读取申报指南，自动规划章节':'Reads the funding guide and plans the chapters','逐章撰写，缺失的事实标记而不编造':'Writes chapter by chapter; missing facts are flagged, never invented','逐条合规检查，一键导出 Word':'Checks every requirement, then exports to Word','自动模式':'Auto mode','系统读取指南，列出所需章节、各章提示词及必须满足的要求。自动模式：一键完成规划、撰写、检查并跳到导出页':'Reads the guide and lists the required chapters, a prompt for each, and the rules it must meet. Auto mode: plan, write, check and jump to export in one click','停止':'Stop','退出':'Log out','历史记录':'History','新建申报书':'New report','每份申报书会自动保存到你的账号':'Every report is saved to your account automatically','下一步：预览与导出 →':'Next: preview & export →','用户名':'Username','密码':'Password','邀请码':'Invite code','登录后，申报书会自动保存，可在“历史记录”中再次打开。':'After you log in, reports are saved automatically and can be reopened from History.','撰写进度':'Progress','字数':'Word count','章节':'Chapters','质量':'Quality',
 '1 输入':'1 Input','2 章节撰写':'2 Write chapters','3 合规检查':'3 Compliance check','4 预览与导出':'4 Preview & export',
 '申报指南':'Funding guide','粘贴申报指南全文，或上传 .txt / .md / .docx / .pdf 文件':'Paste the full funding guide, or upload a .txt / .md / .docx / .pdf file',
 '项目基本信息':'Project details','项目名称':'Project title','申报单位':'Applicant organisation','项目负责人':'Project lead','实施周期':'Duration','如 18 个月':'e.g. 18 months',
@@ -278,7 +278,12 @@ $('fix').onclick=()=>busy($('fix'),async()=>{if(!items.length)throw new Error(t(
  toast(n?t(`已修订 ${n} 章，请重新检查（可在章节页撤销）`,`Revised ${n} chapter(s). Check again (you can undo on the chapter page).`):t('没有可自动修订的章节；缺失的章节请先撰写','Nothing to auto-revise; write the missing chapters first'));side()});
 const done=()=>{const c=chapters.filter(x=>x.text.trim());if(!c.length)throw new Error(t('请先撰写章节','Write some chapters first'));return c},title=()=>$('m-name').value.trim()||t('项目申报书','Project Proposal');
 const CNN='一二三四五六七八九十',cnum=n=>n<=10?CNN[n-1]:n<20?'十'+CNN[n-11]:CNN[Math.floor(n/10)-1]+'十'+(n%10?CNN[n%10-1]:'');
-const NUMSTRIP=/^\s*(?:第[一二三四五六七八九十百\d]+[章节]|[一二三四五六七八九十]+、|\d+(?:\.\d+)*[.、．)）]?)\s*/,clean=l=>l.replace(/^\s*#{1,6}\s*/,'').replace(/\*\*(.+?)\*\*/g,'$1').replace(/^\s*[-*•]\s+/,'').trim();
+const NUMSTRIP=/^\s*(?:第[一二三四五六七八九十百\d]+[章节]|[一二三四五六七八九十]+、|\d+(?:\.\d+)*[.、．)）]?)\s*/,clean=l=>l.replace(/^\s*#{1,6}\s*/,'').replace(/\*\*(.+?)\*\*/g,'$1').replace(/`([^`]*)`/g,'$1').replace(/\[([^\]]+)\]\([^)]*\)/g,'$1').replace(/^\s*>\s?/,'').replace(/^\s*[-*•]\s+/,'').trim();
+const isRow=l=>/^\s*\|.*\|\s*$/.test(l);
+function blocksOf(text){const out=[],L=text.split('\n');for(let i=0;i<L.length;i++){const l=L[i];
+ if(isRow(l)){const rows=[];for(;i<L.length&&isRow(L[i]);i++){const c=L[i].trim().replace(/^\||\|$/g,'').split('|').map(clean);if(!c.every(x=>/^:?-{2,}:?$/.test(x)))rows.push(c)}i--;if(rows.length)out.push({k:'table',rows});continue}
+ if(/^\s*([-*_])\1{2,}\s*$/.test(l))continue; // horizontal rules
+ const t=clean(l);if(t)out.push({k:/^\s*#{1,6}\s/.test(l)?'h2':'p',t})}return out}
 function docModel(){const c=done(),en=!/[\u4e00-\u9fff]/.test(c.map(x=>x.title+x.text).join('').slice(0,800)),v=i=>$(i).value.trim(),d=new Date();
  const L=en?{label:'Project Proposal',name:'Project title',org:'Applicant organisation',lead:'Project lead',dur:'Duration',fund:'Requested funds (10k CNY)',self:'Self-funded (10k CNY)',date:'Date',contents:'Contents',sign:'Signatures',
   date_s:d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}),s:['Project lead (signature): {u}   Date: {u}','Opinion of the applicant organisation:','{u}','Head of organisation (signature and seal): {u}   Date: {u}']}
@@ -287,16 +292,23 @@ function docModel(){const c=done(),en=!/[\u4e00-\u9fff]/.test(c.map(x=>x.title+x
  const title=v('m-name')||L.label;
  return{lang:en?'en':'zh',label:L.label,title,contents:L.contents,sign_title:L.sign,sign:L.s,
   cover:[[L.name,v('m-name')],[L.org,v('m-org')],[L.lead,v('m-lead')],[L.dur,v('m-dur')],[L.fund,v('m-fund')],[L.self,v('m-self')],[L.date,L.date_s]].filter(r=>r[1]),
-  chapters:c.map((x,i)=>({title:(en?`${i+1}. `:`${cnum(i+1)}、`)+x.title.replace(NUMSTRIP,''),blocks:x.text.split('\n').filter(l=>l.trim()).map(l=>({k:/^\s*#{1,6}\s/.test(l)?'h2':'p',t:clean(l)})).filter(b=>b.t)}))}}
+  chapters:c.map((x,i)=>({title:(en?`${i+1}. `:`${cnum(i+1)}、`)+x.title.replace(NUMSTRIP,''),blocks:blocksOf(x.text)}))}}
+const mkTable=rows=>{const n=Math.max(...rows.map(r=>r.length)),t=document.createElement('table');t.className='tb';rows.forEach(r=>{const tr=t.insertRow();for(let i=0;i<n;i++)tr.insertCell().textContent=r[i]??''});return t};
 let pvPages=[],pvLabels=[],pvPage=0;
 function paginate(m){const en=m.lang=='en',host=$('doc'),W=Math.min(794,host.clientWidth||794),pageH=W<600?Math.round(Math.max(W*297/210,innerHeight*1.4)):Math.round(W*297/210),mk=(tag,txt,cls)=>{const e=document.createElement(tag);e.textContent=txt;if(cls)e.className=cls;return e};
  const probe=document.createElement('div');probe.className='sheet'+(en?' en':'');probe.style.cssText=`position:absolute;visibility:hidden;left:-9999px;top:0;width:${W}px;aspect-ratio:auto`;document.body.append(probe);
  const cs=getComputedStyle(probe),H=pageH-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);probe.style.paddingTop=probe.style.paddingBottom='0';
  const pages=[];let cur=[];const flush=()=>{if(cur.length)pages.push(cur.join(''));cur=[];probe.innerHTML=''},fits=()=>probe.offsetHeight<=H;
  const put=e=>{probe.append(e);if(fits()){cur.push(e.outerHTML);return true}e.remove();return false};
- for(const c of m.chapters){let hs=[mk('h1',c.title)],items=[...hs];c.blocks.forEach(b=>items.push(b.k=='h2'?mk('h2',b.t):b.t));
+ for(const c of m.chapters){let hs=[mk('h1',c.title)],items=[...hs];c.blocks.forEach(b=>items.push(b.k=='h2'?mk('h2',b.t):b.k=='table'?{tbl:b.rows}:b.t));
   let pendingHead=null; // keep a heading together with the first lines of what follows it
   for(const it of items){
+   if(it&&it.tbl){const head=it.tbl[0],body=it.tbl.slice(1);let k=0; // tables split by rows; the header row repeats on each page
+    while(true){const att=n=>{const t=mkTable([head,...body.slice(k,k+n)]);probe.append(t);const f=fits();t.remove();return f?t:null};
+     let n=body.length-k,t=att(n);if(!t){let lo=0,hi=n-1;while(lo<hi){const mid=(lo+hi+1)>>1;att(mid)?lo=mid:hi=mid-1}n=lo;t=n?att(n):null}
+     if(!t){if(pendingHead&&cur.length){cur.pop();probe.lastElementChild.remove();flush();put(pendingHead);pendingHead=null;continue}if(cur.length){flush();continue}n=1;t=mkTable([head,...body.slice(k,k+1)])}
+     probe.append(t);cur.push(t.outerHTML);k+=n;pendingHead=null;if(k>=body.length)break;flush()}
+    continue}
    if(typeof it!='string'){if(!put(it)){flush();put(it)}pendingHead=it;continue}
    let rest=it,first=true;
    while(rest){const e=mk('p','');if(!first)e.style.textIndent='0';probe.append(e);
@@ -358,7 +370,7 @@ $('auto').onclick=async()=>{const B=$('auto'),bar=$('abar'),say=m=>$('atx').text
   if(!stop){tab('ck');step=t('检查','checking');say(t('自动模式 · 3/4 正在逐条检查合规性…','Auto mode · 3/4 checking every requirement…'));await checkFn()}
   if(stop){say(t('已停止。已完成的内容已保存，可手动继续。','Stopped. Finished work is saved; continue by hand.'));return}
   tab('pv');const c=k=>items.filter(x=>x.status==k).length,still=limit()&&total()>limit();
-  $('ready').classList.toggle('err',!!still);$('ready').textContent=still?t(`⚠ 申报书已生成，但仍超出字数上限 ${fnum(total()-limit())} ${unitS()}，请手动压缩后再导出。`,`⚠ The proposal is generated but still ${fnum(total()-limit())} ${unitS()} over the limit. Shorten it by hand before exporting.`):t(`✅ 申报书已生成完成，现在可以检查并下载。合规检查：满足 ${c('ok')} / ${items.length} 项。`,`✅ Your proposal is ready. You can now review and download it. Compliance: ${c('ok')} of ${items.length} requirements met.`);$('ready').hidden=false;
+  $('ready').classList.toggle('err',!!still);$('ready').textContent=still?t(`⚠ 申报书已生成，但仍超出字数上限 ${fnum(total()-limit())} ${unitS()}，请手动压缩后再导出。`,`⚠ The proposal is generated but still ${fnum(total()-limit())} ${unitS()} over the limit. Shorten it by hand before exporting.`):t(`✅ 申报书已生成完成，现在可以检查并下载。合规检查：满足 ${c('ok')} / ${items.length} 项。请通读并修改后再提交。`,`✅ Your proposal is ready. You can now review and download it. Compliance: ${c('ok')} of ${items.length} requirements met. Read and edit it before you submit.`);$('ready').hidden=false;
   bar.hidden=true;toast(t('申报书已完成，可以检查并下载','Proposal ready: review and download it'))}
  catch(e){$('err').textContent=t(`自动模式在“${step}”出错：`,`Auto mode failed while ${step}: `)+e.message;say(t('自动模式已中断，已完成的内容已保存。','Auto mode interrupted; finished work is saved.'))}
  finally{B.disabled=$('plan').disabled=false}};
