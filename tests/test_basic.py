@@ -12,3 +12,16 @@ def test_docx_roundtrip():
 
 def test_txt_extract():
     assert extract_text("a.txt", "你好".encode()) == "你好"
+
+
+def test_token_roundtrip_and_tamper():
+    import server
+    tok = server.make_token("alice")
+    assert server.read_token(tok) == "alice"
+    assert server.read_token(tok[:-1] + ("0" if tok[-1] != "0" else "1")) is None   # bad signature
+    assert server.read_token("junk") is None
+
+
+def test_password_hash_differs_by_salt():
+    import server
+    assert server._hash("pw-12345", b"a" * 16) != server._hash("pw-12345", b"b" * 16)

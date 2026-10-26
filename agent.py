@@ -25,11 +25,15 @@ def outline(guide, idea):
     return chat_json(OUTLINE_SYS, f"# Guide\n{guide}\n\n# Applicant idea\n{idea}")
 
 
-def chapter(guide, idea, ch, previous):
+def _cap(budget):
+    return f"\nLength: at most {budget} characters for this chapter (the whole proposal has a hard limit). Never exceed it." if budget else ""
+
+
+def chapter(guide, idea, ch, previous, budget=None):
     prev = "\n\n".join(f"## {p['title']}\n{p['text']}" for p in previous) or "(none yet)"
     reqs = "\n".join("- " + r for r in ch.get("requirements", [])) or "(none)"
     return chat(CHAPTER_SYS, f"# Guide\n{guide}\n\n# Applicant idea\n{idea}\n\n# Earlier chapters\n{prev}\n\n"
-                             f"# Write this chapter: {ch['title']}\nInstruction: {ch['prompt']}\nRequirements:\n{reqs}")
+                             f"# Write this chapter: {ch['title']}\nInstruction: {ch['prompt']}\nRequirements:\n{reqs}{_cap(budget)}")
 
 
 def check(guide, chapters):
@@ -42,5 +46,5 @@ REVISE_SYS = f"""You revise one chapter of a project proposal. Apply the instruc
 Do not invent numbers, names, institutions or results; use [待补充: …] for missing facts. Output the full revised chapter body only. {LANG}"""
 
 
-def revise(guide, idea, ch, instruction):
-    return chat(REVISE_SYS, f"# Guide\n{guide}\n\n# Applicant idea\n{idea}\n\n# Chapter: {ch['title']}\n{ch['text']}\n\n# Instruction / issues to fix\n{instruction}")
+def revise(guide, idea, ch, instruction, budget=None):
+    return chat(REVISE_SYS, f"# Guide\n{guide}\n\n# Applicant idea\n{idea}\n\n# Chapter: {ch['title']}\n{ch['text']}\n\n# Instruction / issues to fix\n{instruction}{_cap(budget)}")
