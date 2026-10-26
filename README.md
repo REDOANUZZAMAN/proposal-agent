@@ -20,3 +20,6 @@ python -c "import sys;sys.path.insert(0,'tests');import test_basic as t;t.test_d
 `examples/sample_guide.txt` is a made-up demo guide, not a real notice.
 Limits: the model can still write weak or generic text, so a human must read and edit the draft; rate limits are retried 5 times.
 Accounts and reports live in `data/` (SQLite, git-ignored). The server speaks plain HTTP: passwords are not encrypted in transit until you put it behind HTTPS.
+
+**Admin.** `python3 admin.py make-admin <email> [password]` creates (or promotes) an admin; an admin sees an **Admin** tab with usage stats, user management (disable / enable / reset password / make admin / delete) and invite codes (create with a label, use limit and expiry; revoke). Admins see usage numbers only, never report contents. `python3 admin.py invite "<label>" [max_uses] [days]` makes an invite from the shell.
+**Language.** The UI starts in Chinese for visitors from mainland-China IPs and English otherwise (ranges from APNIC, refreshed with `python3 admin.py update-geo`); a visitor's own 中文/EN choice always wins. Hong Kong, Macau and Taiwan count as non-China.

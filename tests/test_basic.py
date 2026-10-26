@@ -16,8 +16,8 @@ def test_txt_extract():
 
 def test_token_roundtrip_and_tamper():
     import server
-    tok = server.make_token("alice")
-    assert server.read_token(tok) == "alice"
+    tok = server.make_token("alice", "abc123")
+    assert server.read_token(tok) == ("alice", "abc123")
     assert server.read_token(tok[:-1] + ("0" if tok[-1] != "0" else "1")) is None   # bad signature
     assert server.read_token("junk") is None
 
@@ -25,3 +25,9 @@ def test_token_roundtrip_and_tamper():
 def test_password_hash_differs_by_salt():
     import server
     assert server._hash("pw-12345", b"a" * 16) != server._hash("pw-12345", b"b" * 16)
+
+
+def test_is_cn():
+    import server
+    assert server.is_cn("114.114.114.114") and server.is_cn("::ffff:114.114.114.114")
+    assert not server.is_cn("8.8.8.8") and not server.is_cn("127.0.0.1") and not server.is_cn("garbage")

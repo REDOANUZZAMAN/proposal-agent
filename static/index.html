@@ -75,7 +75,7 @@ option{background:var(--card);color:var(--tx)}
  .nav a.on{border-color:var(--ac)}.nav .dot{width:20px;height:20px}.nav a span.t{white-space:nowrap}.nav>span.mut{grid-column:1/-1}
  main{padding:12px 12px 8px}
  .tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;margin:0;background:var(--card);border-top:1px solid var(--bd);border-bottom:0;box-shadow:0 -4px 14px rgba(40,25,10,.1);padding-bottom:env(safe-area-inset-bottom)}
- .tabs button{flex:1;padding:11px 2px 10px;font-size:12px;border-bottom:0;border-top:3px solid transparent;border-radius:0;white-space:nowrap}.tabs button.on{border-top-color:var(--ac)}
+ .tabs{overflow-x:auto;scrollbar-width:none}.tabs button{flex:1 0 auto;padding:11px 10px 10px;font-size:12px;border-bottom:0;border-top:3px solid transparent;border-radius:0;white-space:nowrap}.tabs button.on{border-top-color:var(--ac)}
  .toast{bottom:74px;left:12px;right:12px;text-align:center}
  .sec{padding:13px 13px}textarea,input,select{font-size:16px}textarea{min-height:90px}
  [data-k=text]{min-height:240px!important}
@@ -83,9 +83,9 @@ option{background:var(--card);color:var(--tx)}
  .row{gap:8px}.row button{flex:1 1 auto}.row .sp{display:none}.row input[data-r]{width:100%!important;flex:1 1 100%}
  input[type=file]{min-width:0;width:100%}
  .sum{gap:14px 22px}.sum b{font-size:22px}
- .sec table,.sec tbody,.sec tr,.sec td,.sec th{display:block;width:auto!important}.sec table tr:first-child{display:none}
- .sec table tr{border:1px solid var(--bd);border-radius:6px;padding:8px 10px;margin-bottom:8px;background:var(--card)}.sec td{border:0;padding:2px 0}
- .sec td:nth-child(3):before{content:"位置：";color:var(--mut)}.sec td:nth-child(2){padding:4px 0}
+ #rt table,#rt tbody,#rt tr,#rt td,#rt th{display:block;width:auto!important}#rt table tr:first-child{display:none}
+ #rt table tr{border:1px solid var(--bd);border-radius:6px;padding:8px 10px;margin-bottom:8px;background:var(--card)}#rt td{border:0;padding:2px 0}
+ #rt td:nth-child(3):before{content:"位置：";color:var(--mut)}#rt td:nth-child(2){padding:4px 0}
  .doc{padding:22px 16px;font-size:14.5px;line-height:1.85}.doc h1{font-size:19px}
  h2 .tag{float:none!important;display:inline-block;margin-left:8px;vertical-align:middle}
 }
@@ -107,6 +107,8 @@ option{background:var(--card);color:var(--tx)}
 #ae{color:var(--er);font-size:13px;margin-top:10px;min-height:1.2em}#as{width:100%;padding:11px;font-size:15px;margin-top:6px}
 @media(max-width:700px){.ab{grid-template-columns:1fr;max-width:420px}.abl{padding:18px 22px;border-right:0;border-bottom:3px solid var(--gold);display:flex;align-items:center;gap:14px;flex-wrap:wrap}.abl h1{margin:0;font-size:17px}.abl p,.abl ul{display:none}.logo{width:38px;height:38px;font-size:19px}#af{padding:22px 22px 20px}}
 .hi{transition:box-shadow .15s,border-color .15s}.hi:hover{box-shadow:0 4px 14px rgba(40,25,10,.12);border-color:color-mix(in srgb,var(--ac) 40%,var(--bd))}.hi .meter{grid-column:1/-1;height:4px;margin:4px 0 0}
+.bars{display:flex;gap:8px;align-items:flex-end;height:84px;margin-top:12px}.bars div{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;font-size:10.5px;color:var(--mut);gap:3px}.bars i{display:block;width:100%;background:var(--gold);border-radius:3px 3px 0 0;min-height:2px}
+.tw{overflow-x:auto}.at td,.at th{white-space:nowrap}.at code{font:12px ui-monospace,monospace;background:var(--bg);padding:2px 6px;border-radius:4px;user-select:all}.at button{padding:3px 9px;font-size:12px}.at td:first-child{white-space:normal;word-break:break-all;min-width:150px;max-width:230px}.at td:last-child{white-space:normal;min-width:240px}.at td:last-child button{margin:0 4px 4px 0}header small{flex:0 1 auto;min-width:0;max-width:18vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#who{max-width:210px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sec .row input{width:auto;min-width:0}
 </style></head><body>
 <header><h1>项目申报书生成系统</h1><small>Proposal Agent · 依据申报指南分章节撰写、检查与修订</small><span class="sp"></span>
 <span id="who" class="mut" style="color:#f0d9d6"></span><button id="out" hidden>退出</button><button id="lang" title="Language / 语言">EN</button><button id="sample">载入示例</button><button id="clear">清空</button></header>
@@ -116,7 +118,7 @@ option{background:var(--card);color:var(--tx)}
 <h3>章节</h3><div class="nav" id="nav"><span class="mut">生成章节后显示</span></div>
 <h3>质量</h3><div class="mut" id="qs">未检查</div></aside>
 <main>
-<div class="tabs" id="tabs"><button data-t="in" class="on">1 输入</button><button data-t="ed">2 章节撰写</button><button data-t="ck">3 合规检查</button><button data-t="pv">4 预览与导出</button><button data-t="hs" style="margin-left:auto">历史记录</button></div>
+<div class="tabs" id="tabs"><button data-t="in" class="on">1 输入</button><button data-t="ed">2 章节撰写</button><button data-t="ck">3 合规检查</button><button data-t="pv">4 预览与导出</button><button data-t="hs" style="margin-left:auto">历史记录</button><button data-t="ad" id="tad" hidden>管理后台</button></div>
 <div id="err"></div><div id="abar" class="req" hidden><b id="atx"></b> <button id="astop" style="margin-left:10px">停止</button></div>
 
 <div class="pane on" id="p-in">
@@ -137,6 +139,8 @@ option{background:var(--card);color:var(--tx)}
 <div class="pane" id="p-ck"><div class="sec"><h2>合规检查</h2><div id="rt" class="mut">尚未检查。完成章节撰写后点击下方按钮，逐条对照指南要求。</div>
 <div class="row"><button class="p" id="chk">开始检查</button><button id="fix">按检查意见自动修订</button><span class="sp"></span><button data-go="pv">下一步：预览与导出 →</button></div></div></div>
 
+<div class="pane" id="p-ad"><div id="adm"></div></div>
+
 <div class="pane" id="p-hs"><div class="sec"><h2>历史记录</h2><div class="row" style="margin:0 0 10px"><button class="p" id="newr">新建申报书</button><span class="mut">每份申报书会自动保存到你的账号</span></div><div id="hl"></div></div></div>
 
 <div class="pane" id="p-pv"><div id="ready" hidden></div><div class="row" style="margin:0 0 12px"><button class="p" id="exp">导出 Word</button><button id="mdx">导出 Markdown</button><button id="cpy">复制全文</button><span class="mut">下方为排版预览</span></div><div class="doc" id="doc"></div></div>
@@ -150,11 +154,11 @@ option{background:var(--card);color:var(--tx)}
 <div class="toast" id="toast"></div>
 <script>
 const $=id=>document.getElementById(id),LS='proposal-agent-v2',LL='proposal-agent-lang';let chapters=[],items=[],cur=0,me=null,rid=null,reg=false,timer=null;
-let lang;try{lang=localStorage[LL]}catch(e){}lang=lang||(/^zh/i.test(navigator.language)?'zh':'en');
+let lang,admin=false;try{lang=localStorage[LL]}catch(e){}const saved=!!lang;lang=lang||(/^zh/i.test(navigator.language)?'zh':'en');
 const t=(z,e)=>lang=='en'?e:z;
 // static UI text: Chinese -> English (dynamic text uses t() inline)
 const EN={'项目申报书生成系统':'Project Proposal Generator','Proposal Agent · 依据申报指南分章节撰写、检查与修订':'Proposal Agent · draft, check and revise chapter by chapter from the funding guide',
-'载入示例':'Load sample','清空':'Clear','登录':'Log in','注册':'Register','显示':'Show','隐藏':'Hide','读取申报指南，自动规划章节':'Reads the funding guide and plans the chapters','逐章撰写，缺失的事实标记而不编造':'Writes chapter by chapter; missing facts are flagged, never invented','逐条合规检查，一键导出 Word':'Checks every requirement, then exports to Word','自动模式':'Auto mode','系统读取指南，列出所需章节、各章提示词及必须满足的要求。自动模式：一键完成规划、撰写、检查并跳到导出页':'Reads the guide and lists the required chapters, a prompt for each, and the rules it must meet. Auto mode: plan, write, check and jump to export in one click','停止':'Stop','退出':'Log out','历史记录':'History','新建申报书':'New report','每份申报书会自动保存到你的账号':'Every report is saved to your account automatically','下一步：预览与导出 →':'Next: preview & export →','用户名':'Username','密码':'Password','邀请码':'Invite code','登录后，申报书会自动保存，可在“历史记录”中再次打开。':'After you log in, reports are saved automatically and can be reopened from History.','撰写进度':'Progress','字数':'Word count','章节':'Chapters','质量':'Quality',
+'载入示例':'Load sample','清空':'Clear','管理后台':'Admin','登录':'Log in','注册':'Register','显示':'Show','隐藏':'Hide','读取申报指南，自动规划章节':'Reads the funding guide and plans the chapters','逐章撰写，缺失的事实标记而不编造':'Writes chapter by chapter; missing facts are flagged, never invented','逐条合规检查，一键导出 Word':'Checks every requirement, then exports to Word','自动模式':'Auto mode','系统读取指南，列出所需章节、各章提示词及必须满足的要求。自动模式：一键完成规划、撰写、检查并跳到导出页':'Reads the guide and lists the required chapters, a prompt for each, and the rules it must meet. Auto mode: plan, write, check and jump to export in one click','停止':'Stop','退出':'Log out','历史记录':'History','新建申报书':'New report','每份申报书会自动保存到你的账号':'Every report is saved to your account automatically','下一步：预览与导出 →':'Next: preview & export →','用户名':'Username','密码':'Password','邀请码':'Invite code','登录后，申报书会自动保存，可在“历史记录”中再次打开。':'After you log in, reports are saved automatically and can be reopened from History.','撰写进度':'Progress','字数':'Word count','章节':'Chapters','质量':'Quality',
 '1 输入':'1 Input','2 章节撰写':'2 Write chapters','3 合规检查':'3 Compliance check','4 预览与导出':'4 Preview & export',
 '申报指南':'Funding guide','粘贴申报指南全文，或上传 .txt / .md / .docx / .pdf 文件':'Paste the full funding guide, or upload a .txt / .md / .docx / .pdf file',
 '项目基本信息':'Project details','项目名称':'Project title','申报单位':'Applicant organisation','项目负责人':'Project lead','实施周期':'Duration','如 18 个月':'e.g. 18 months',
@@ -183,7 +187,7 @@ function save(){try{localStorage[LS+':'+me]=JSON.stringify(getState())}catch(e){
 async function sync(){clearTimeout(timer);timer=null;if(!me||!($('guide').value.trim()||chapters.length))return;
  try{rid=(await(await api('/api/reports',{id:rid,title:$('m-name').value.trim()||$('guide').value.trim().split('\n')[0].slice(0,60),data:getState()})).json()).id;localStorage[LS+':'+me]=JSON.stringify(getState())}catch(e){}}
 document.querySelectorAll('textarea#guide,#idea,.grid input,.grid select').forEach(e=>e.oninput=save);
-function tab(x){if(x=='hs')hist();document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t==x));document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.id=='p-'+x));if(x=='pv')preview()}
+function tab(x){if(x=='hs')hist();if(x=='ad')adm();document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t==x));document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.id=='p-'+x));if(x=='pv')preview()}
 $('tabs').onclick=e=>{const b=e.target.closest('[data-t]');b&&tab(b.dataset.t)}; // closest(): browser translation wraps button text in <font>
 document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');g&&tab(g.dataset.go)});
 const limit=()=>+(($('guide').value.match(/不(?:得)?超过\s*(\d+)\s*字/)||[])[1])||0,budget=()=>limit()&&chapters.length?Math.floor(limit()*.9/chapters.length):undefined;
@@ -252,14 +256,14 @@ $('hl').onclick=async e=>{const o=e.target.closest('[data-open]'),d=e.target.clo
  if(o)await busy(o,async()=>{const s=await(await api('/api/reports/'+o.dataset.open,0,1)).json();setState({...s,rid:+o.dataset.open});save();render();report();tab(chapters.length?'ed':'in')});
  if(d&&confirm(t('删除这份申报书？','Delete this report?')))await busy(d,async()=>{await api('/api/reports/delete',{id:+d.dataset.del});if(+d.dataset.del==rid){setState();save()}hist();render();report()})};
 $('newr').onclick=async()=>{$('ready').hidden=true;await sync();setState();save();render();report();tab('in')};
-function showAuth(){$('auth').hidden=!!me;$('who').textContent=me||'';$('out').hidden=!me;if(me)return;
+function showAuth(){$('tad').hidden=!admin;$('auth').hidden=!!me;$('who').textContent=me||'';$('out').hidden=!me;if(me)return;
  $('at').textContent=reg?t('创建账号','Create an account'):t('欢迎回来','Welcome back');$('as').textContent=reg?t('注册','Register'):t('登录','Log in');$('ai').hidden=!reg;$('ap').autocomplete=reg?'new-password':'current-password';
  document.querySelectorAll('#seg button').forEach(b=>b.classList.toggle('on',(b.dataset.m=='register')==reg));$('al').textContent=lang=='en'?'中文':'EN';$('sp').textContent=$('ap').type=='password'?t('显示','Show'):t('隐藏','Hide')}
 $('seg').onclick=e=>{const b=e.target.closest('[data-m]');if(b){reg=b.dataset.m=='register';$('ae').textContent='';showAuth()}};
 $('sp').onclick=()=>{$('ap').type=$('ap').type=='password'?'text':'password';showAuth()};$('al').onclick=()=>$('lang').click();
 $('af').onsubmit=async e=>{e.preventDefault();$('ae').textContent='';
- try{me=(await(await api(reg?'/api/register':'/api/login',{user:$('au').value,password:$('ap').value,invite:$('ac').value})).json()).user;$('ap').value='';$('ap').type='password';reg=false;enter()}catch(x){$('ae').textContent=x.message}};
-$('out').onclick=async()=>{await sync();await api('/api/logout',{});me=null;reg=false;setState();showAuth();render();report()};
+ try{const j=await(await api(reg?'/api/register':'/api/login',{user:$('au').value,password:$('ap').value,invite:$('ac').value})).json();me=j.user;admin=!!j.admin;$('ap').value='';$('ap').type='password';reg=false;enter()}catch(x){$('ae').textContent=x.message}};
+$('out').onclick=async()=>{await sync();await api('/api/logout',{});me=null;admin=false;reg=false;setState();showAuth();render();report()};
 function enter(){let s;try{s=JSON.parse(localStorage[LS+':'+me]||localStorage[LS]||'null')}catch(e){}setState(s);showAuth();applyLang();if(chapters.length||$('guide').value.trim())sync()}
 let stop=false;
 $('astop').onclick=()=>{stop=true;$('atx').textContent=t('正在停止…（当前这一步完成后停下）','Stopping… (after the current step)')};
@@ -277,8 +281,28 @@ $('auto').onclick=async()=>{const B=$('auto'),bar=$('abar'),say=m=>$('atx').text
   bar.hidden=true;toast(t('申报书已完成，可以检查并下载','Proposal ready: review and download it'))}
  catch(e){$('err').textContent=t(`自动模式在“${step}”出错：`,`Auto mode failed while ${step}: `)+e.message;say(t('自动模式已中断，已完成的内容已保存。','Auto mode interrupted; finished work is saved.'))}
  finally{B.disabled=$('plan').disabled=false}};
+const ago=u=>{if(!u)return '—';const d=Date.now()/1000-u;return d<90?t('刚刚','just now'):d<5400?t(`${Math.round(d/60)} 分钟前`,`${Math.round(d/60)} min ago`):d<172800?t(`${Math.round(d/3600)} 小时前`,`${Math.round(d/3600)} h ago`):fmt(u)};
+async function adm(){const el=$('adm');if(!el.innerHTML)el.textContent=t('加载中…','Loading…');
+ try{const g=k=>api('/api/admin/'+k,0,1).then(r=>r.json());const [S,U,I]=await Promise.all([g('stats'),g('users'),g('invites')]),mx=Math.max(1,...S.daily.map(d=>d.calls)),now=Date.now()/1000;
+ const st=v=>v.revoked?['missing',t('已撤销','Revoked')]:v.expires&&v.expires<now?['partial',t('已过期','Expired')]:v.max_uses&&v.uses>=v.max_uses?['partial',t('已用完','Used up')]:['ok',t('有效','Active')];
+ el.innerHTML=`<div class="sec"><h2>${t('概览','Overview')}</h2><div class="sum"><div><b>${S.users}</b><span>${t('用户','Users')}</span></div><div><b>${S.reports}</b><span>${t('申报书','Reports')}</span></div><div><b>${S.new7}</b><span>${t('近 7 天新用户','New users (7 days)')}</span></div><div><b>${S.calls_today}</b><span>${t('今日 AI 调用','AI calls today')}</span></div><div><b>${S.calls7}</b><span>${t('近 7 天 AI 调用','AI calls (7 days)')}</span></div><div><b>${S.calls_total}</b><span>${t('AI 调用总数','AI calls, all time')}</span></div></div>
+  <div class="mut">${t('近 7 天 AI 调用次数','AI calls per day, last 7 days')}</div><div class="bars">${S.daily.map(d=>`<div title="${d.day}: ${d.calls}"><i style="height:${d.calls/mx*100}%"></i><span>${d.day.slice(5)}</span></div>`).join('')}</div></div>
+ <div class="sec"><h2>${t('用户','Users')} (${U.users.length})</h2><div class="tw"><table class="at"><tr><th>${t('用户名','Username')}</th><th>${t('申报书','Reports')}</th><th>${t('AI 调用（总/7天）','AI calls (all / 7d)')}</th><th>${t('注册时间','Joined')}</th><th>${t('最近活跃','Last active')}</th><th>${t('操作','Actions')}</th></tr>
+  ${U.users.map(u=>`<tr><td><b>${esc(u.name)}</b> ${u.admin?`<span class="tag ok">${t('管理员','Admin')}</span>`:''}${u.disabled?` <span class="tag missing">${t('已禁用','Disabled')}</span>`:''}</td><td>${u.reports}</td><td>${u.calls} / ${u.calls7}</td><td>${u.created?new Date(u.created*1000).toLocaleDateString(lang=='en'?'en-GB':'zh-CN'):'—'}</td><td>${ago(u.last_seen)}</td>
+  <td><button data-ua="${u.disabled?'enable':'disable'}" data-un="${esc(u.name)}">${u.disabled?t('启用','Enable'):t('禁用','Disable')}</button><button data-ua="reset_password" data-un="${esc(u.name)}">${t('重置密码','Reset password')}</button><button data-ua="${u.admin?'remove_admin':'make_admin'}" data-un="${esc(u.name)}">${u.admin?t('取消管理员','Remove admin'):t('设为管理员','Make admin')}</button><button data-ua="delete" data-un="${esc(u.name)}">${t('删除','Delete')}</button></td></tr>`).join('')}</table></div>
+  <div class="mut" style="margin-top:8px">${t('出于隐私，管理员只能看到用户的统计数据，看不到申报书内容。','For privacy, admins see usage numbers only, never the contents of a user\'s reports.')}</div></div>
+ <div class="sec"><h2>${t('邀请码','Invite codes')}</h2><div class="row" style="margin:0 0 12px"><input id="iv-l" placeholder="${t('备注，如：何教授','Label, e.g. Prof. He')}" style="width:200px"><input id="iv-m" type="number" min="0" value="5" style="width:90px" title="${t('可使用次数（0 = 不限）','Max uses (0 = unlimited)')}"><span class="mut">${t('次','uses')}</span><input id="iv-d" type="number" min="0" value="30" style="width:90px" title="${t('有效天数（0 = 永久）','Valid days (0 = never expires)')}"><span class="mut">${t('天','days')}</span><button class="p" id="iv-new">${t('生成邀请码','Create invite code')}</button></div>
+  <div class="tw"><table class="at"><tr><th>${t('邀请码','Code')}</th><th>${t('备注','Label')}</th><th>${t('使用','Used')}</th><th>${t('到期','Expires')}</th><th>${t('状态','Status')}</th><th></th></tr>
+  ${I.invites.map(v=>{const[c,l]=st(v);return`<tr><td><code>${esc(v.code)}</code></td><td>${esc(v.label)}</td><td>${v.uses} / ${v.max_uses||'∞'}</td><td>${v.expires?fmt(v.expires):t('永久','Never')}</td><td><span class="tag ${c}">${l}</span></td><td><button data-cp="${esc(v.code)}">${t('复制','Copy')}</button>${v.revoked?'':`<button data-rv="${esc(v.code)}">${t('撤销','Revoke')}</button>`}</td></tr>`}).join('')}</table></div></div>`}
+ catch(e){el.textContent=e.message}}
+$('adm').onclick=async e=>{const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.ua){const n=b.dataset.un,a=b.dataset.ua;if((a=='delete'||a=='disable')&&!confirm(a=='delete'?t(`永久删除用户 ${n} 及其全部申报书？`,`Permanently delete ${n} and all their reports?`):t(`禁用 ${n}？该用户将无法登录。`,`Disable ${n}? They will not be able to log in.`)))return;
+  await busy(b,async()=>{const r=await(await api('/api/admin/user',{name:n,action:a})).json();if(r.error)throw new Error(r.error);if(r.password)prompt(t('新密码（请复制并发给用户）：','New password (copy it and send it to the user):'),r.password);await adm()})}
+ if(b.id=='iv-new')await busy(b,async()=>{const r=await(await api('/api/admin/invite',{label:$('iv-l').value,max_uses:+$('iv-m').value,days:+$('iv-d').value})).json();await adm();toast(t('已生成：','Created: ')+r.code)});
+ if(b.dataset.rv&&confirm(t('撤销这个邀请码？','Revoke this invite code?')))await busy(b,async()=>{await api('/api/admin/invite/revoke',{code:b.dataset.rv});await adm()});
+ if(b.dataset.cp){try{await navigator.clipboard.writeText(b.dataset.cp);toast(t('已复制','Copied'))}catch(x){}}};
 function applyLang(){document.documentElement.lang=lang;stat.forEach(([n,z,raw])=>{const v=lang=='en'?EN[z]:z;n.nodeType==3?n.nodeValue=raw.replace(z,v):n.placeholder=v});
- $('lang').textContent=lang=='en'?'中文':'EN';document.title=lang=='en'?'Proposal Agent':'项目申报书生成系统 · Proposal Agent';showAuth();render();side();report();if($('p-pv').classList.contains('on'))preview();if($('p-hs').classList.contains('on'))hist()}
+ $('lang').textContent=lang=='en'?'中文':'EN';document.title=lang=='en'?'Proposal Agent':'项目申报书生成系统 · Proposal Agent';showAuth();render();side();report();if($('p-pv').classList.contains('on'))preview();if($('p-hs').classList.contains('on'))hist();if($('p-ad').classList.contains('on'))adm()}
 $('lang').onclick=()=>{lang=lang=='en'?'zh':'en';try{localStorage[LL]=lang}catch(e){}applyLang()};
-showAuth();applyLang();api('/api/me',0,1).then(r=>r.json()).then(j=>{me=j.user;if(me)enter();else showAuth()});
+showAuth();applyLang();api('/api/me',0,1).then(r=>r.json()).then(j=>{if(!saved&&j.lang)lang=j.lang;admin=!!j.admin;me=j.user;if(me)enter();else{showAuth();applyLang()}});
 </script></body></html>
