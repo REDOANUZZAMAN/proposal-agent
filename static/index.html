@@ -125,6 +125,11 @@ option{background:var(--card);color:var(--tx)}
 #boot aside{padding:18px 16px}#boot main{padding:18px 22px}.bc{background:var(--card);border:1px solid var(--bd);border-top:3px solid var(--navy);border-radius:8px;padding:18px;margin-bottom:14px}
 .skl{height:12px;margin:10px 0}.skb{height:38px;margin:10px 0}.sktab{display:flex;gap:18px;margin-bottom:18px;border-bottom:1px solid var(--bd);padding-bottom:12px}
 @media(max-width:820px){#boot .bw{grid-template-columns:1fr}#boot aside{display:none}#boot main{padding:12px}#boot .bh .hide-m{display:none}}
+#selpop{position:fixed;z-index:40;width:360px;max-width:calc(100vw - 16px);background:var(--card);color:var(--tx);border:1px solid var(--bd);border-top:3px solid var(--gold);border-radius:10px;box-shadow:0 12px 34px rgba(40,25,10,.28);padding:10px 12px}#selpop[hidden]{display:none}
+#selpop .sp-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}#selpop .sp-h button{border:0;background:none;font-size:20px;line-height:1;padding:0 4px;color:var(--mut)}
+#sp-q{font-size:12px;background:var(--acbg);border-radius:5px;padding:4px 8px;margin:2px 0 8px;max-height:3.4em;overflow:hidden;color:var(--tx)}
+#selpop .sp-r{display:flex;gap:6px}#selpop input{flex:1;min-width:0}#sp-e{color:var(--er);font-size:12px;margin-top:6px}
+#selpop.mob{left:10px;right:10px;bottom:72px;top:auto;width:auto;max-width:none}
 </style></head><body>
 <div id="boot" role="status" aria-label="Loading"><div class="bh"><div class="sk" style="width:190px"></div><div class="sk hide-m" style="width:260px;opacity:.6"></div><span style="flex:1"></span><div class="sk" style="width:70px;height:28px"></div><div class="sk" style="width:70px;height:28px"></div></div>
 <div class="bw"><aside><div class="sk skl" style="width:60%"></div><div class="sk" style="height:6px;margin:10px 0 24px"></div><div class="sk skl" style="width:45%"></div><div class="sk" style="height:6px;margin:10px 0 24px"></div><div class="sk skl" style="width:50%"></div><div class="sk skl"></div><div class="sk skl" style="width:85%"></div><div class="sk skl" style="width:70%"></div></aside>
@@ -163,7 +168,7 @@ option{background:var(--card);color:var(--tx)}
 
 <div class="pane" id="p-hs"><div class="sec"><h2>历史记录</h2><div class="row" style="margin:0 0 10px"><button class="p" id="newr">新建申报书</button><span class="mut">每份申报书会自动保存到你的账号</span></div><div id="hl"></div></div></div>
 
-<div class="pane" id="p-pv"><div id="ready" hidden></div><div class="row" style="margin:0 0 12px"><button class="p" id="exp">导出 Word</button><button id="mdx">导出 Markdown</button><button id="cpy">复制全文</button><span class="mut">下方为排版预览</span></div><div class="pnote" id="pnote"></div><div class="pgs" id="doc"></div></div>
+<div class="pane" id="p-pv"><div id="ready" hidden></div><div class="row" style="margin:0 0 12px"><button class="p" id="exp">导出 Word</button><button class="p" id="pdf">导出 PDF</button><button id="mdx">导出 Markdown</button><button id="cpy">复制全文</button><span class="mut">下方为排版预览</span></div><div class="pnote" id="pnote"></div><div class="pgs" id="doc"></div></div>
 </main></div><div id="auth"><button id="al" type="button">EN</button><div class="ab">
 <div class="abl"><div class="logo">申</div><h1>项目申报书生成系统</h1><p>Proposal Agent</p><ul><li>读取申报指南，自动规划章节</li><li>逐章撰写，缺失的事实标记而不编造</li><li>逐条合规检查，一键导出 Word</li></ul></div>
 <form id="af"><div class="seg" id="seg"><button type="button" data-m="login">登录</button><button type="button" data-m="register">注册</button></div>
@@ -171,6 +176,8 @@ option{background:var(--card);color:var(--tx)}
 <label class="l">密码</label><div class="pw"><input id="ap" type="password" autocomplete="current-password" required minlength="8"><button type="button" id="sp">显示</button></div>
 <div id="ai" hidden><label class="l">邀请码</label><input id="ac" autocomplete="off"></div><div id="ae"></div>
 <button class="p" id="as">登录</button><div class="mut" style="margin-top:14px;text-align:center">登录后，申报书会自动保存，可在“历史记录”中再次打开。</div></form></div></div>
+<div id="selpop" hidden role="dialog"><div class="sp-h"><b id="sp-t"></b><button id="sp-x" type="button" aria-label="Close">×</button></div><div id="sp-q" class="mut"></div>
+<div class="sp-r"><input id="sp-i" autocomplete="off"><button class="p" id="sp-go" type="button"></button></div><div id="sp-e"></div></div>
 <div class="toast" id="toast"></div>
 <script>
 const $=id=>document.getElementById(id),LS='proposal-agent-v2',LL='proposal-agent-lang';let chapters=[],items=[],cur=0,me=null,rid=null,reg=false,timer=null;
@@ -178,7 +185,7 @@ let lang,admin=false;try{lang=localStorage[LL]}catch(e){}const saved=!!lang;lang
 const t=(z,e)=>lang=='en'?e:z;
 // static UI text: Chinese -> English (dynamic text uses t() inline)
 const EN={'项目申报书生成系统':'Project Proposal Generator','Proposal Agent · 依据申报指南分章节撰写、检查与修订':'Proposal Agent · draft, check and revise chapter by chapter from the funding guide',
-'载入示例':'Load sample','清空':'Clear','压缩到字数上限':'Shorten to the limit','管理后台':'Admin','登录':'Log in','注册':'Register','显示':'Show','隐藏':'Hide','读取申报指南，自动规划章节':'Reads the funding guide and plans the chapters','逐章撰写，缺失的事实标记而不编造':'Writes chapter by chapter; missing facts are flagged, never invented','逐条合规检查，一键导出 Word':'Checks every requirement, then exports to Word','自动模式':'Auto mode','系统读取指南，列出所需章节、各章提示词及必须满足的要求。自动模式：一键完成规划、撰写、检查并跳到导出页':'Reads the guide and lists the required chapters, a prompt for each, and the rules it must meet. Auto mode: plan, write, check and jump to export in one click','停止':'Stop','退出':'Log out','历史记录':'History','新建申报书':'New report','每份申报书会自动保存到你的账号':'Every report is saved to your account automatically','下一步：预览与导出 →':'Next: preview & export →','用户名':'Username','密码':'Password','邀请码':'Invite code','登录后，申报书会自动保存，可在“历史记录”中再次打开。':'After you log in, reports are saved automatically and can be reopened from History.','撰写进度':'Progress','字数':'Word count','章节':'Chapters','质量':'Quality',
+'载入示例':'Load sample','清空':'Clear','导出 PDF':'Export PDF','压缩到字数上限':'Shorten to the limit','管理后台':'Admin','登录':'Log in','注册':'Register','显示':'Show','隐藏':'Hide','读取申报指南，自动规划章节':'Reads the funding guide and plans the chapters','逐章撰写，缺失的事实标记而不编造':'Writes chapter by chapter; missing facts are flagged, never invented','逐条合规检查，一键导出 Word':'Checks every requirement, then exports to Word','自动模式':'Auto mode','系统读取指南，列出所需章节、各章提示词及必须满足的要求。自动模式：一键完成规划、撰写、检查并跳到导出页':'Reads the guide and lists the required chapters, a prompt for each, and the rules it must meet. Auto mode: plan, write, check and jump to export in one click','停止':'Stop','退出':'Log out','历史记录':'History','新建申报书':'New report','每份申报书会自动保存到你的账号':'Every report is saved to your account automatically','下一步：预览与导出 →':'Next: preview & export →','用户名':'Username','密码':'Password','邀请码':'Invite code','登录后，申报书会自动保存，可在“历史记录”中再次打开。':'After you log in, reports are saved automatically and can be reopened from History.','撰写进度':'Progress','字数':'Word count','章节':'Chapters','质量':'Quality',
 '1 输入':'1 Input','2 章节撰写':'2 Write chapters','3 合规检查':'3 Compliance check','4 预览与导出':'4 Preview & export',
 '申报指南':'Funding guide','粘贴申报指南全文，或上传 .txt / .md / .docx / .pdf 文件':'Paste the full funding guide, or upload a .txt / .md / .docx / .pdf file',
 '项目基本信息':'Project details','项目名称':'Project title','申报单位':'Applicant organisation','项目负责人':'Project lead','实施周期':'Duration','如 18 个月':'e.g. 18 months',
@@ -248,6 +255,8 @@ function render(){$('empty').hidden=chapters.length>0;$('list').innerHTML='';if(
  <input data-r placeholder="${t('修订指令，如：压缩到 500 字 / 增加量化指标','Revision, e.g. shorten to 500 words / add measurable indicators')}" style="width:300px"><button data-v>${t('按指令修订','Revise')}</button></div>
  <div class="row"><button data-p ${i?'':'disabled'}>${t('上一章','Previous')}</button><button data-n>${i<chapters.length-1?t('下一章','Next'):t('下一步：合规检查 →','Next: compliance check →')}</button><span class="sp"></span><button data-all>${t('从头到尾生成全部章节','Write all chapters')}</button>${limit()&&chapters.reduce((a,x)=>a+x.text.length,0)>limit()?`<button data-fit>${t('压缩到字数上限','Shorten to the limit')}</button>`:''}</div>`;
  d.querySelectorAll('[data-k]').forEach(el=>{el.value=c[el.dataset.k]||'';el.oninput=()=>{c[el.dataset.k]=el.value;save();if(el.dataset.k=='text'){const g=d.querySelector('.tag');g.textContent=tagOf(c);g.classList.toggle('ok',!!c.text.trim())}}});
+ const tx=d.querySelector('[data-k=text]');tx.onmousedown=hideSel;tx.onmouseup=()=>setTimeout(()=>selCheck(tx,c,true),0);
+ tx.ontouchend=()=>setTimeout(()=>selCheck(tx,c,false),350);tx.addEventListener('keyup',e=>{if(e.key=='Escape')hideSel();else if(e.shiftKey||/^(Arrow|Home|End|Page)/.test(e.key)||(e.key=='a'&&(e.ctrlKey||e.metaKey)))setTimeout(()=>selCheck(tx,c,false),0)});tx.addEventListener('input',hideSel);
  d.querySelector('[data-g]').onclick=e=>busy(e.currentTarget,async()=>{await gen(i);render()});
  d.querySelector('[data-u]').onclick=()=>{c.text=c.hist.pop();save();render()};
  d.querySelector('[data-v]').onclick=e=>busy(e.currentTarget,async()=>{const ins=d.querySelector('[data-r]').value.trim();if(!ins||!c.text.trim())throw new Error(t('请先生成本章并填写修订指令','Write the chapter and enter a revision instruction first'));await rev(i,ins);render()});
@@ -336,6 +345,7 @@ document.addEventListener('keydown',e=>{if(!$('p-pv').classList.contains('on')||
 addEventListener('beforeprint',()=>{if(pvPages.length&&$('p-pv').classList.contains('on'))$('doc').innerHTML=pvPages.join('')});addEventListener('afterprint',()=>{if(pvPages.length)showPage(pvPage)});
 function dl(b,n){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=n;a.click()}
 $('exp').onclick=()=>busy($('exp'),async()=>{if(limit()&&total()>limit()&&!confirm(t('当前超出字数上限，仍要导出吗？','The text is over the limit. Export anyway?')))return;dl(await(await api('/api/export',{model:docModel()})).blob(),'proposal.docx')});
+$('pdf').onclick=()=>busy($('pdf'),async()=>{if(limit()&&total()>limit()&&!confirm(t('当前超出字数上限，仍要导出吗？','The text is over the limit. Export anyway?')))return;dl(await(await api('/api/export_pdf',{model:docModel()})).blob(),'proposal.pdf')});
 $('mdx').onclick=()=>{try{dl(new Blob([`# ${title()}\n\n`+done().map(x=>`## ${x.title}\n\n${x.text}\n`).join('\n')],{type:'text/markdown'}),'proposal.md')}catch(e){$('err').textContent=e.message}};
 $('cpy').onclick=async()=>{try{await navigator.clipboard.writeText(done().map(x=>x.title+'\n'+x.text).join('\n\n'));toast(t('已复制','Copied'))}catch(e){$('err').textContent=e.message}};
 const fmt=u=>new Date(u*1000).toLocaleString(lang=='en'?'en-GB':'zh-CN',{dateStyle:'medium',timeStyle:'short'});
@@ -394,6 +404,30 @@ $('adm').onclick=async e=>{const b=e.target.closest('button');if(!b)return;
  if(b.id=='iv-new')await busy(b,async()=>{const r=await(await api('/api/admin/invite',{label:$('iv-l').value,max_uses:+$('iv-m').value,days:+$('iv-d').value})).json();await adm();toast(t('已生成：','Created: ')+r.code)});
  if(b.dataset.rv&&confirm(t('撤销这个邀请码？','Revoke this invite code?')))await busy(b,async()=>{await api('/api/admin/invite/revoke',{code:b.dataset.rv});await adm()});
  if(b.dataset.cp){try{await navigator.clipboard.writeText(b.dataset.cp);toast(t('已复制','Copied'))}catch(x){}}};
+let selS=null; // the selected passage in "Text (edit directly)"
+function caretXY(ta,pos){const cs=getComputedStyle(ta),m=document.createElement('div');
+ ['fontFamily','fontSize','fontWeight','fontStyle','lineHeight','letterSpacing','paddingTop','paddingRight','paddingBottom','paddingLeft','borderTopWidth','borderRightWidth','borderBottomWidth','borderLeftWidth','boxSizing','tabSize'].forEach(k=>m.style[k]=cs[k]);
+ Object.assign(m.style,{position:'absolute',visibility:'hidden',top:'0',left:'-9999px',width:ta.offsetWidth+'px',whiteSpace:'pre-wrap',overflowWrap:'break-word',wordBreak:cs.wordBreak});
+ m.textContent=ta.value.slice(0,pos);const mark=document.createElement('span');mark.textContent='\u200b';m.append(mark);document.body.append(m);
+ const r=ta.getBoundingClientRect(),mr=m.getBoundingClientRect(),sr=mark.getBoundingClientRect(),lh=parseFloat(cs.lineHeight)||parseFloat(cs.fontSize)*1.6,top=sr.top-mr.top;m.remove();
+ return{x:r.left+(sr.left-mr.left)-ta.scrollLeft,y:Math.min(Math.max(r.top+top+lh-ta.scrollTop,r.top+lh),r.bottom),lh,content:top}}
+function placeSel(){const p=$('selpop');if(!selS||p.hidden)return;if(innerWidth<=820){p.classList.add('mob');p.style.left=p.style.top='';return}p.classList.remove('mob');
+ const e=caretXY(selS.ta,selS.end),s=caretXY(selS.ta,selS.start),w=p.offsetWidth,h=p.offsetHeight;let y=e.y+6;if(y+h>innerHeight-8)y=Math.max(8,s.y-s.lh-h-6);
+ p.style.left=Math.min(Math.max(8,e.x-20),innerWidth-w-8)+'px';p.style.top=y+'px'}
+function hideSel(){selS=null;$('selpop').hidden=true}
+function selCheck(ta,c,focus){const s=ta.selectionStart,e=ta.selectionEnd;if(e<=s||!ta.value.slice(s,e).trim()){hideSel();return}
+ selS={ta,c,start:s,end:e,text:ta.value.slice(s,e)};const q=selS.text.replace(/\s+/g,' ').trim();
+ $('sp-q').textContent='“'+(q.length>80?q.slice(0,80)+'…':q)+'”';$('sp-e').textContent='';$('sp-t').textContent=t('修改所选内容','Change the selected text');
+ $('sp-i').placeholder=t('修改要求，如：更简洁','Change, e.g. make it shorter');$('sp-go').textContent=t('改写','Rewrite');$('selpop').hidden=false;placeSel();if(focus)$('sp-i').focus()}
+$('sp-x').onclick=hideSel;$('sp-i').onkeydown=e=>{if(e.key=='Enter'){e.preventDefault();$('sp-go').click()}if(e.key=='Escape')hideSel()};
+document.addEventListener('mousedown',e=>{if(selS&&!e.target.closest('#selpop'))hideSel()});addEventListener('scroll',placeSel,true);addEventListener('resize',placeSel);
+$('sp-go').onclick=async()=>{if(!selS)return;const ins=$('sp-i').value.trim(),{c,start,end,text}=selS,full=c.text;if(!ins){$('sp-e').textContent=t('请先写出要怎样修改','Write what you want changed first');return}
+ const go=$('sp-go');go.disabled=true;go.textContent=t('处理中…','Working…');$('sp-e').textContent='';
+ try{const r=await(await api('/api/rewrite',{guide:$('guide').value,idea:idea(),title:c.title,before:full.slice(Math.max(0,start-800),start),selected:text,after:full.slice(end,end+800),instruction:ins})).json();
+  let s=start;if(c.text.slice(start,end)!==text){s=c.text.indexOf(text);if(s<0)throw new Error(t('这段文字已被修改，请重新选择','The text changed meanwhile; select it again'))}
+  const rep=text.match(/^\s*/)[0]+r.text.trim()+text.match(/\s*$/)[0];c.hist.push(c.text);c.text=c.text.slice(0,s)+rep+c.text.slice(s+text.length);$('sp-i').value='';save();hideSel();render();
+  const ta=$('list').querySelector('[data-k=text]');ta.focus();ta.setSelectionRange(s,s+rep.length);ta.scrollTop=Math.max(0,caretXY(ta,s).content-120);toast(t('已改写所选内容（可点“撤销上一次修改”还原）','Selected text rewritten (use “Undo last change” to restore it)'))}
+ catch(x){$('sp-e').textContent=x.message}finally{go.disabled=false;go.textContent=t('改写','Rewrite')}};
 function applyLang(){document.documentElement.lang=lang;stat.forEach(([n,z,raw])=>{const v=lang=='en'?EN[z]:z;n.nodeType==3?n.nodeValue=raw.replace(z,v):n.placeholder=v});
  $('lang').textContent=lang=='en'?'中文':'EN';document.title=lang=='en'?'Proposal Agent':'项目申报书生成系统 · Proposal Agent';showAuth();render();side();report();if($('p-pv').classList.contains('on'))preview();if($('p-hs').classList.contains('on'))hist();if($('p-ad').classList.contains('on'))adm()}
 $('lang').onclick=()=>{lang=lang=='en'?'zh':'en';try{localStorage[LL]=lang}catch(e){}applyLang()};

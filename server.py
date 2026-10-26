@@ -82,6 +82,24 @@ def load_geo():
 GEO = load_geo()
 
 
+PDF_SLOTS = threading.BoundedSemaphore(2)          # LibreOffice is heavy: at most 2 conversions at once
+
+
+def docx_to_pdf(docx):
+    """Convert with the same engine/layout as the Word file, so PDF and Word always agree."""
+    with PDF_SLOTS, tempfile.TemporaryDirectory() as d:
+        src = os.path.join(d, "proposal.docx")
+        with open(src, "wb") as f:
+            f.write(docx)
+        subprocess.run(["soffice", "--headless", "--norestore", f"-env:UserInstallation=file://{d}/profile", "--convert-to", "pdf", "--outdir", d, src],
+                       capture_output=True, timeout=120, env={**os.environ, "HOME": d})
+        out = os.path.join(d, "proposal.pdf")
+        if not os.path.exists(out):
+            raise RuntimeError("PDF conversion failed")
+        with open(out, "rb") as f:
+            return f.read()
+
+
 def is_cn(ip):
     try:
         a = ipaddress.ip_address(ip.split("%")[0])
@@ -209,7 +227,7 @@ class H(BaseHTTPRequestHandler):
                 return self._send(401, {"error": "login required"})
             if u.path.startswith("/api/admin/"):
                 return self._send(200, self.admin_post(u.path, j)) if self.is_admin() else self._send(403, {"error": "admin only"})
-            if u.path in ("/api/outline", "/api/chapter", "/api/revise", "/api/check"):
+            if u.path in ("/api/outline", "/api/chapter", "/api/revise", "/api/check", "/api/rewrite"):
                 db.execute("INSERT INTO usage VALUES(?,?,1) ON CONFLICT(user,day) DO UPDATE SET calls=calls+1", (self.user(), time.strftime("%Y-%m-%d")))
             if u.path == "/api/reports":
                 return self.save_report(j)
@@ -224,6 +242,17 @@ class H(BaseHTTPRequestHandler):
                 return self._send(200, {"text": agent.revise(j["guide"], j.get("idea", ""), j["chapter"], j["instruction"], j.get("budget"), j.get("unit", "chars"))})
             if u.path == "/api/check":
                 return self._send(200, agent.check(j["guide"], j["chapters"], j.get("count"), j.get("unit", "chars"), j.get("info", "")))
+            if u.path == "/api/rewrite":
+                sel = str(j["selected"])
+                if not sel.strip() or len(sel) > 8000:
+                    raise ValueError("select between 1 and 8000 characters")
+                return self._send(200, {"text": agent.rewrite(j["guide"], j.get("idea", ""), str(j.get("title", "")), str(j.get("before", ""))[-2000:],
+                                                              sel, str(j.get("after", ""))[:2000], str(j["instruction"])[:1000])})
+            if u.path == "/api/export_pdf":
+                m = j["model"]
+                if not isinstance(m, dict) or not isinstance(m.get("chapters"), list) or len(m["chapters"]) > 100:
+                    raise ValueError("bad document model")
+                return self._send(200, docx_to_pdf(docx_out.build(m)), "application/pdf", {"Content-Disposition": "attachment; filename=proposal.pdf"})
             if u.path == "/api/export":
                 m = j["model"]
                 if not isinstance(m, dict) or not isinstance(m.get("chapters"), list) or len(m["chapters"]) > 100:

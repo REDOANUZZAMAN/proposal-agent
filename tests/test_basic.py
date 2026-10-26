@@ -44,3 +44,11 @@ def test_is_cn():
     import server
     assert server.is_cn("114.114.114.114") and server.is_cn("::ffff:114.114.114.114")
     assert not server.is_cn("8.8.8.8") and not server.is_cn("127.0.0.1") and not server.is_cn("garbage")
+
+
+def test_pdf_export():
+    import shutil, server
+    if not shutil.which("soffice"):
+        return                                    # LibreOffice not installed: PDF export is unavailable, nothing to test
+    pdf = server.docx_to_pdf(docx_out.build(_model()))
+    assert pdf.startswith(b"%PDF-") and len(pdf) > 5000

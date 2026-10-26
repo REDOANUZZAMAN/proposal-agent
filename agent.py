@@ -50,3 +50,15 @@ Do not invent numbers, names, institutions or results; use [待补充: …] for 
 
 def revise(guide, idea, ch, instruction, budget=None, unit="chars"):
     return chat(REVISE_SYS, f"# Guide\n{guide}\n\n# Applicant idea\n{idea}\n\n# Chapter: {ch['title']}\n{ch['text']}\n\n# Instruction / issues to fix\n{instruction}{_cap(budget, unit)}")
+
+
+REWRITE_SYS = f"""You rewrite ONE selected passage inside a chapter of a project proposal, following the author's instruction exactly.
+Output only the replacement passage: no quotes, no markers, no explanation, no heading. It must fit smoothly between the text before and after it.
+Keep the passage's language and style. Unless the instruction asks for another length, keep about the same length as the original.
+Do not invent numbers, names, institutions or results; use [待补充: …] for missing facts. {LANG}"""
+
+
+def rewrite(guide, idea, title, before, selected, after, instruction):
+    out = chat(REWRITE_SYS, f"# Guide (for reference)\n{guide[:6000]}\n\n# Applicant idea\n{idea}\n\n# Chapter: {title}\n"
+                            f"{before}[SELECTED START]{selected}[SELECTED END]{after}\n\n# Instruction for the selected passage\n{instruction}")
+    return out.replace("[SELECTED START]", "").replace("[SELECTED END]", "").strip().strip("\"“”")
