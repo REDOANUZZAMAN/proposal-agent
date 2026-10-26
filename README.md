@@ -1,5 +1,7 @@
 # proposal-agent · 项目申报书生成智能体
 
+**Live demo (invite-only):** https://proposal.rmaikr.top/
+
 Give it a funding guide (申报指南) and your project idea; it writes the proposal chapter by chapter.
 
 0. **Log in** (accounts; register needs the `INVITE_CODE` from `.env`). Every report is saved to your account and can be reopened from **History**.
@@ -21,7 +23,7 @@ python -c "import sys;sys.path.insert(0,'tests');import test_basic as t;t.test_d
 ```
 `examples/sample_guide.txt` is a made-up demo guide, not a real notice.
 Limits: the model can still write weak or generic text, so a human must read and edit the draft; rate limits are retried 5 times.
-Accounts and reports live in `data/` (SQLite, git-ignored). The server speaks plain HTTP: passwords are not encrypted in transit until you put it behind HTTPS.
+Accounts and reports live in `data/` (SQLite, git-ignored). Run it behind an HTTPS reverse proxy in production (the live demo uses Traefik + Cloudflare). Behind a proxy the server reads the visitor's address from `CF-Connecting-IP` / `X-Forwarded-For` only when the connection comes from a private address, and marks the login cookie `Secure` when `X-Forwarded-Proto` is `https`.
 
 **Admin.** `python3 admin.py make-admin <email> [password]` creates (or promotes) an admin; an admin sees an **Admin** tab with usage stats, user management (disable / enable / reset password / make admin / delete) and invite codes (create with a label, use limit and expiry; revoke). Admins see usage numbers only, never report contents. `python3 admin.py invite "<label>" [max_uses] [days]` makes an invite from the shell.
 **Language.** The UI starts in Chinese for visitors from mainland-China IPs and English otherwise (ranges from APNIC, refreshed with `python3 admin.py update-geo`); a visitor's own 中文/EN choice always wins. Hong Kong, Macau and Taiwan count as non-China.
